@@ -1,0 +1,5 @@
+{
+  "templates": [
+    { "id": "LI-PRD-RC-13/2S4P", "name": "Stack Assembly", "file": "stack_assembly.php" }
+  ]
+}
