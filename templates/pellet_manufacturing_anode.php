@@ -672,15 +672,12 @@ textarea{resize:vertical}
       <td><input type="text" name="p2_range[]" value="<?= h($_POST['p2_range'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_pow[]" value="<?= h($_POST['p2_pow'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_w[]" value="<?= h($_POST['p2_w'][$i]??'') ?>"></td>
-      <td><input type="text" name="p2_d[]" value="<?= h($_POST['p2_d'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_t1[]" value="<?= h($_POST['p2_t1'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_t2[]" value="<?= h($_POST['p2_t2'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_t3[]" value="<?= h($_POST['p2_t3'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_t4[]" value="<?= h($_POST['p2_t4'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_t5[]" value="<?= h($_POST['p2_t5'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_avg[]" value="<?= h($_POST['p2_avg'][$i]??'') ?>"></td>
-      <td><input type="text" name="p2_press[]" value="<?= h($_POST['p2_press'][$i]??'') ?>"></td>
-      <td><input type="text" name="p2_comp[]" value="<?= h($_POST['p2_comp'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_mm[]" value="<?= h($_POST['p2_mm'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_density[]" value="<?= h($_POST['p2_density'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_insp[]" value="<?= h($_POST['p2_insp'][$i]??'') ?>"></td>
