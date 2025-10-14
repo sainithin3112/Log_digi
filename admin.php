@@ -55,9 +55,12 @@ foreach($loadTpls as $tplId){
 if ($search !== ''){ $rows = array_values(array_filter($rows, fn($pair)=> stripos(json_encode($pair[1]), $search)!==false)); }
 usort($rows, fn($A,$B)=> (strtotime($B[1]['meta']['created_at'] ?? '1970-01-01') <=> strtotime($A[1]['meta']['created_at'] ?? '1970-01-01')));
 ?>
-<!doctype html><html><head>
+<!doctype html><html>
+  <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Logs Admin</title>
+    <!-- Other head elements like Bootstrap CSS link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
   body{font:14px/1.35 "Segoe UI", Arial, sans-serif; color:#111; background:#fff; margin:0}
   .wrap{max-width:1200px;margin:20px auto;padding:0 12px}
@@ -105,7 +108,8 @@ usort($rows, fn($A,$B)=> (strtotime($B[1]['meta']['created_at'] ?? '1970-01-01')
     <thead><tr>
       <th>Template</th><th>Created</th><th>UID</th><th>WI No</th><th>Log ID</th><th>Log SR No</th>
       <th>O/P Name</th><th class="center">Qty</th><th>Operator</th><th>Date</th>
-      <th>Yield</th><th>MH/Stack</th><th>Lost MH</th><th>View</th><th>Print</th>
+      <th>Yield</th><th>MH/Stack</th><th>Lost MH</th><th>View</th>
+      <!-- <th>Print</th> -->
     </tr></thead>
     <tbody>
       <?php foreach($rows as [$t,$e]): $created=$e['meta']['created_at']??''; $when=$created?date('d-M-Y H:i:s', strtotime($created)):''; $payload = htmlspecialchars(json_encode($e, JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8'); $uid=$e['meta']['uid']??''; ?>
@@ -123,8 +127,14 @@ usort($rows, fn($A,$B)=> (strtotime($B[1]['meta']['created_at'] ?? '1970-01-01')
           <td><?= h($e['sec5_output']['yield'] ?? '') ?></td>
           <td><?= h($e['sec5_output']['mh_stack'] ?? '') ?></td>
           <td><?= h($e['sec5_output']['lost_mh'] ?? '') ?></td>
-          <td class="center"><button class="btn light" type="button" onclick='show(<?= "\"$payload\"" ?>)'>View</button></td>
-          <td class="center"><a class="btn" href="run.php?id=<?= urlencode($t) ?>&load=<?= urlencode($uid) ?>&autopreview=1" target="_blank">Open</a></td>
+          <td class="center">
+            <a class="btn light" style="border: none;background: none;text-align: center;padding: 0;"type="button" href="run.php?id=<?= urlencode($t) ?>&load=<?= urlencode($uid) ?>&autopreview=1" target="_blank">
+              <i class="fa fa-eye"></i>
+            </a>
+          </td>
+          <!-- <td class="center">
+            <a class="btn"  >Open</a>
+          </td> -->
         </tr>
       <?php endforeach; ?>
     </tbody>

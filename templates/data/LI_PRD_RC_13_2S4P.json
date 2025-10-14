@@ -1,0 +1,135 @@
+[
+    {
+        "meta": {
+            "uid": "d5ce679cb37d6da1",
+            "template_id": "LI-PRD-RC-13/2S4P",
+            "created_at": "2025-10-12T19:28:15+05:30",
+            "ip": "127.0.0.1",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:143.0) Gecko/20100101 Firefox/143.0"
+        },
+        "header1": {
+            "wi_name": "STACK ASSEMBLY",
+            "wi_no": "WI-PRD-13",
+            "log_id": "LI-PRD-RC-13/2S4P",
+            "log_sr_no": "001",
+            "hazard_ids": "R07-20, R07-21, R07-22",
+            "risk_rank": "MEDIUM",
+            "consequence_rank": {
+                "E": 2,
+                "M": 2,
+                "F": 2,
+                "R": 2
+            }
+        },
+        "header2": {
+            "op_name": "",
+            "op_code": "",
+            "op_lot": "",
+            "qty": "",
+            "std_time": "",
+            "operator": "",
+            "date": ""
+        },
+        "sec1": {
+            "operator_checks": {
+                "apron": "",
+                "gloves": "",
+                "mask": "",
+                "glove_box": "",
+                "h_press": "",
+                "operator": ""
+            },
+            "earthing": {
+                "glove_box": "",
+                "h_press": "",
+                "operator": ""
+            },
+            "safety_clearance": "",
+            "comments": ""
+        },
+        "sec2": {
+            "ids": {
+                "glove_box_id": "",
+                "balance_id": "",
+                "hpress_id": "",
+                "vernier_id": ""
+            },
+            "cleaning": {
+                "gb": "",
+                "bal": "",
+                "hp": "",
+                "ver": ""
+            },
+            "dew_point_limits": "Min: -80\u00b0C; Max: -50\u00b0C",
+            "calibration": {
+                "bal": "",
+                "hp": "",
+                "ver": ""
+            },
+            "utilities": {
+                "tray": "",
+                "forceps": "",
+                "ram": "",
+                "brace_plate_adapter": "",
+                "hitting_bit": ""
+            }
+        },
+        "sec3_materials": [
+            {
+                "name": "ANODE PELLETS",
+                "code": "",
+                "lot": "",
+                "qty": "",
+                "expiry": ""
+            },
+            {
+                "name": "DRIED CATHODE PELLETS",
+                "code": "",
+                "lot": "",
+                "qty": "",
+                "expiry": ""
+            },
+            {
+                "name": "DRIED ELECTROLYTE PELLETS",
+                "code": "",
+                "lot": "",
+                "qty": "",
+                "expiry": ""
+            },
+            {
+                "name": "DRIED HEAT PELLET - 1",
+                "code": "",
+                "lot": "",
+                "qty": "",
+                "expiry": ""
+            },
+            {
+                "name": "DRIED HEAT PELLET - 2",
+                "code": "",
+                "lot": "",
+                "qty": "",
+                "expiry": ""
+            },
+            {
+                "name": "DRIED HEAT PELLET - 3",
+                "code": "",
+                "lot": "",
+                "qty": "",
+                "expiry": ""
+            }
+        ],
+        "sec4_process_log": [],
+        "sec5_output": {
+            "stack_qty": "",
+            "accepted": "",
+            "rejected": "",
+            "yield": "",
+            "mh_stack": "",
+            "material_loss": "",
+            "pct_loss": "",
+            "actual_mh": "",
+            "lost_mh": "",
+            "observations": ""
+        }
+    }
+]

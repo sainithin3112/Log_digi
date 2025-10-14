@@ -1,0 +1,305 @@
+body {
+  font: 16px/1.35 "Segoe UI", Arial, sans-serif;
+  color: #111;
+  background: #fff;
+  margin: 0;
+}
+
+.wrap {
+  max-width: 1100px;
+  margin: 20px auto;
+  padding: 0 12px;
+}
+
+h1 {
+  margin: 0 0 12px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.card {
+  border: 1px solid #e2e2e2;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card h3 {
+  margin: 0 0 8px;
+}
+
+.mono {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  color: #333;
+}
+
+.btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid #111;
+  border-radius: 8px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+a.link {
+  color: #0a66ff;
+  text-decoration: none;
+}
+
+/* for stack assembly  */
+:root {
+  --ink: #111;
+  --blue: #0a66ff;
+  --bd2: 2px solid #000;
+  --bd1: 1px solid #000;
+  --ok: #0a8a00;
+  --bad: #c1121f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: var(--ink);
+  font: 13px/1.25 "Segoe UI", Arial, Helvetica, sans-serif;
+}
+
+.page {
+  width: 1100px;
+  margin: 16px auto;
+  padding: 8px;
+  border: var(--bd2);
+}
+
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  border: var(--bd2);
+  table-layout: fixed;
+}
+
+.tbl th,
+.tbl td {
+  border: var(--bd1);
+  padding: 6px;
+  vertical-align: middle;
+}
+
+.narrow td,
+.narrow th {
+  padding: 4px;
+}
+
+.dewminmax {
+  display: inline-block;
+  font-size: 10px; /* shrink a bit so both lines fit */
+  line-height: 1.15;
+  white-space: normal; /* allow wrapping */
+}
+
+.center {
+  text-align: center;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+input[type=text],
+input[type=number],
+input[type=date],
+textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: 2px 4px;
+  font: inherit;
+  background: #fff;
+  text-align: center;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.sec-title {
+  background: #f3f6ff;
+  font-weight: 700;
+}
+
+.logo-cell {
+  padding: 0;
+  vertical-align: middle;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 8px;
+}
+
+.logo svg {
+  height: 34px;
+}
+
+.urow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.urow .itm {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-right: 6px;
+}
+
+.box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 20px;
+  border: var(--bd1);
+  user-select: none;
+  cursor: pointer;
+}
+
+.chk.tick {
+  color: var(--ok);
+  font-weight: 900;
+}
+
+.chk.cross {
+  color: var(--bad);
+  font-weight: 900;
+}
+
+.note {
+  font-size: 12px;
+}
+
+.bar {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  padding: 8px 0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn {
+  border: 1px solid #444;
+  background: #0a0a0a;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn.secondary {
+  background: #e9eefb;
+  color: #111;
+  border-color: #9bb2ff;
+}
+
+.btn.light {
+  background: #fff;
+  color: #111;
+  border-color: #999;
+}
+
+.msg {
+  margin: 8px auto;
+  width: 1100px;
+}
+
+.ok {
+  background: #e8f7ea;
+  border: 1px solid #9bd3a0;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.err {
+  background: #fde8e9;
+  border: 1px solid #f29ca3;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.footer-stamp {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 12px;
+  color: #000;
+}
+
+@media print {
+  .bar {
+    display: none;
+  }
+  .page {
+    margin: 0;
+    border: none;
+    width: auto;
+  }
+}
+.filled {
+  display: block;
+  min-height: 18px;
+  text-align: center;
+  white-space: pre-wrap;
+}
+
+.consq .grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+
+.consq .grid div {
+  border: var(--bd1);
+  text-align: center;
+  padding: 4px 0;
+}
+
+.help {
+  font-size: 12px;
+  color: #555;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.s3-table {
+  height: 200px;
+}
+.s3-table .t1,
+.s3-table .t2 {
+  height: 100px;
+}/*# sourceMappingURL=style.css.map */

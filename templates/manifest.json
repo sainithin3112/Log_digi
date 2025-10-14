@@ -1,5 +1,14 @@
 {
   "templates": [
-    { "id": "LI-PRD-RC-13/2S4P", "name": "Stack Assembly", "file": "stack_assembly.php" }
+    {
+      "id": "LI-PRD-RC-13/2S4P",
+      "name": "Stack Assembly",
+      "file": "stack_assembly.php"
+    },
+    {
+      "id": "LI-PRD-RC-28A",
+      "name": "Pellet Manufacturing (Anode)",
+      "file": "Pellet_Manufacturing_Anode.php"
+    }
   ]
 }
