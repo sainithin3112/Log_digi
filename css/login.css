@@ -17,7 +17,7 @@ h1 {
 }
 
 a {
-  color: #5469d4;
+  color: #272974;
   text-decoration: unset;
 }
 
@@ -79,7 +79,7 @@ a {
 }
 
 .box-background--blue {
-  background-color: #5469d4;
+  background-color: #272974;
 }
 
 .box-background--white {
@@ -147,7 +147,8 @@ label {
   margin-bottom: 10px;
 }
 
-.reset-pass a, label {
+.reset-pass a,
+label {
   font-size: 14px;
   font-weight: 600;
   display: block;
@@ -178,8 +179,8 @@ label {
 }
 
 input[type=submit] {
-  background-color: rgb(84, 105, 212);
-  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.12) 0px 1px 1px 0px, rgb(84, 105, 212) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(60, 66, 87, 0.08) 0px 2px 5px 0px;
+  background-color: #272974;
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.12) 0px 1px 1px 0px, #272974 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(60, 66, 87, 0.08) 0px 2px 5px 0px;
   color: #fff;
   font-weight: 600;
   cursor: pointer;

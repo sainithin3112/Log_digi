@@ -1,8 +1,8 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Stackfindover: Sign in</title>
-  <link rel="stylesheet" type="text/css" href="css/login.css">
+  <title>Renewable Energy Systems Limited: Login</title>
+  <link rel="stylesheet" type="text/css" href="css/login.css?V=1">
 </head>
 
 <body>
@@ -42,46 +42,43 @@
       </div>
       <div class="box-root padding-top--24 flex-flex flex-direction--column" style="flex-grow: 1; z-index: 9;">
         <div class="box-root padding-top--48 padding-bottom--24 flex-flex flex-justifyContent--center">
-          <h1><a href="http://blog.stackfindover.com/" rel="dofollow">Stackfindover</a></h1>
+          <h1><a href=https://resindia.co.in/ rel="dofollow">Renewable Energy Systems Limited</a></h1>
         </div>
         <div class="formbg-outer">
           <div class="formbg">
             <div class="formbg-inner padding-horizontal--48">
-              <span class="padding-bottom--15">Sign in to your account</span>
+              <span class="padding-bottom--15">Login in to your account</span>
               <form id="stripe-login">
                 <div class="field padding-bottom--24">
-                  <label for="email">Email</label>
-                  <input type="email" name="email">
+                  <label for="employee id">Employee ID</label>
+                  <input type="number" name="employee_id">
                 </div>
                 <div class="field padding-bottom--24">
                   <div class="grid--50-50">
                     <label for="password">Password</label>
-                    <div class="reset-pass">
+                    <!-- <div class="reset-pass">
                       <a href="#">Forgot your password?</a>
-                    </div>
+                    </div> -->
                   </div>
                   <input type="password" name="password">
                 </div>
-                <div class="field field-checkbox padding-bottom--24 flex-flex align-center">
+                <!-- <div class="field field-checkbox padding-bottom--24 flex-flex align-center">
                   <label for="checkbox">
                     <input type="checkbox" name="checkbox"> Stay signed in for a week
                   </label>
-                </div>
+                </div> -->
                 <div class="field padding-bottom--24">
-                  <input type="submit" name="submit" value="Continue">
+                  <input type="submit" name="submit" value="Login">
                 </div>
-                <div class="field">
+                <!-- <div class="field">
                   <a class="ssolink" href="#">Use single sign-on (Google) instead</a>
-                </div>
+                </div> -->
               </form>
             </div>
           </div>
           <div class="footer-link padding-top--24">
-            <span>Don't have an account? <a href="">Sign up</a></span>
             <div class="listing padding-top--24 padding-bottom--24 flex-flex center-center">
-              <span><a href="#">© Stackfindover</a></span>
-              <span><a href="#">Contact</a></span>
-              <span><a href="#">Privacy & terms</a></span>
+              <span><a href="#">© Renewable Energy Systems Ltd. 2025 | All Rights Reserved</a></span>
             </div>
           </div>
         </div>
