@@ -17,9 +17,6 @@
           <div class="box-root flex-flex" style="grid-area: 4 / 2 / auto / 5;">
             <div class="box-root box-divider--light-all-2 animationLeftRight tans3s" style="flex-grow: 1;"></div>
           </div>
-          <div class="box-root flex-flex" style="grid-area: 6 / start / auto / 2;">
-            <div class="box-root box-background--blue800" style="flex-grow: 1;"></div>
-          </div>
           <div class="box-root flex-flex" style="grid-area: 7 / start / auto / 4;">
             <div class="box-root box-background--blue animationLeftRight" style="flex-grow: 1;"></div>
           </div>
@@ -27,7 +24,7 @@
             <div class="box-root box-background--gray100 animationLeftRight tans3s" style="flex-grow: 1;"></div>
           </div>
           <div class="box-root flex-flex" style="grid-area: 2 / 15 / auto / end;">
-            <div class="box-root box-background--cyan200 animationRightLeft tans4s" style="flex-grow: 1;"></div>
+            <div class="box-root box-background--gray100 animationRightLeft tans4s" style="flex-grow: 1;"></div>
           </div>
           <div class="box-root flex-flex" style="grid-area: 3 / 14 / auto / end;">
             <div class="box-root box-background--blue animationRightLeft" style="flex-grow: 1;"></div>
@@ -47,11 +44,11 @@
         <div class="formbg-outer">
           <div class="formbg">
             <div class="formbg-inner padding-horizontal--48">
-              <span class="padding-bottom--15">Login in to your account</span>
+              <!-- <span class="padding-bottom--15">Login in to your account</span> -->
               <form id="stripe-login">
                 <div class="field padding-bottom--24">
                   <label for="employee id">Employee ID</label>
-                  <input type="number" name="employee_id">
+                  <input type="text" name="employee_id">
                 </div>
                 <div class="field padding-bottom--24">
                   <div class="grid--50-50">
