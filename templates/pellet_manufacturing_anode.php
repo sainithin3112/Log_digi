@@ -596,7 +596,7 @@ textarea{resize:vertical}
     </tr>
     <?php for($i=0;$i<7;$i++): ?>
     <tr>
-      <td><input type="text" name="qi_time[]" value="<?= h($_POST['qi_time'][$i]??'') ?>"></td>
+      <td><input type="time" name="qi_time[]" value="<?= h($_POST['qi_time'][$i]??'') ?>"></td>
       <td><input type="text" name="qi_range[]" value="<?= h($_POST['qi_range'][$i]??'') ?>"></td>
       <td><input type="text" name="qi_pow[]" value="<?= h($_POST['qi_pow'][$i]??'') ?>"></td>
       <td><input type="text" name="qi_w[]" value="<?= h($_POST['qi_w'][$i]??'') ?>"></td>
@@ -647,7 +647,35 @@ textarea{resize:vertical}
       <td><input type="time" name="end_time" value="<?= h(v('end_time','')) ?>"></td>
     </tr>
   </table>
-
+  <table class="tbl narrow" style="margin-top:8px">
+    <colgroup><col style="width:12%"><col style="width:08%"><col style="width:12%"><col style="width:08%"><col style="width:14%"><col style="width:08%"><col style="width:09%"><col style="width:08%"><col style="width:13%"><col style="width:08%"></colgroup>
+    <tr class="center">
+      <th>PELLET WT. RANGE AS PER PID (g)
+          <td>
+            <input type="text" name="pellet_weight[]" value="<?= h($_POST['pellet_weight'][$i]??'') ?>">
+          </td>
+      </th>
+      <th>PELLET DIA (mm) (D)
+          <td>
+            <input type="text" name="pellet_dia" value="<?= h($_POST['pellet_dia'][$i]??'') ?>">
+          </td>
+      </th>
+      <th>PELLET THK. RANGE AS PER PID (mm)
+          <td>
+            <input type="text" name="pellet_thk_range[]" value="<?= h($_POST['pellet_thk_range'][$i]??'') ?>">
+          </td>
+      </th>
+      <th>PRESSURE (kg/cm²)
+          <td>
+            <input type="text" name="pressure[]" value="<?= h($_POST['pressure'][$i]??'') ?>">
+          </td>
+      </th>
+      <th>COMPRESSION TIME (sec)
+          <td>
+            <input type="text" name="compression[]" value="<?= h($_POST['compression'][$i]??'') ?>">
+          </td>
+    </tr>
+  </table>
   <table class="tbl narrow" style="margin-top:8px">
     <tr class="center"><th rowspan="2" style="width:10%">TIME OF INSPECTION</th>
       <th rowspan="2" style="width:10%">PELLET NO(s) (FROM - TO)</th>
@@ -668,7 +696,7 @@ textarea{resize:vertical}
     </tr>
     <?php for($i=0;$i<7;$i++): ?>
     <tr>
-      <td><input type="text" name="p2_time[]" value="<?= h($_POST['p2_time'][$i]??'') ?>"></td>
+      <td><input type="time" name="p2_time[]" value="<?= h($_POST['p2_time'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_range[]" value="<?= h($_POST['p2_range'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_pow[]" value="<?= h($_POST['p2_pow'][$i]??'') ?>"></td>
       <td><input type="text" name="p2_w[]" value="<?= h($_POST['p2_w'][$i]??'') ?>"></td>
@@ -723,7 +751,7 @@ textarea{resize:vertical}
           <tr><th>ACCEPTED (A)</th><td><input type="text" name="accepted_a" value="<?= h(v('accepted_a','')) ?>"></td></tr>
           <tr><th>TOTAL WT OF ACCEPTED PELLETS (g)</th><td><input type="text" name="accepted_weight" value="<?= h(v('accepted_weight','')) ?>"></td></tr>
           <tr>
-            <th>REJECTED ()</th>
+            <th>REJECTED (R)</th>
             <td>
               <div class="rej-div" style="display: flex; text-align: center; padding: 0;">
                 <li class="rej-list" style="list-style: none; display: flex; align-items: center; padding: 0;">
@@ -738,11 +766,7 @@ textarea{resize:vertical}
                   <label> B </label>
                   <input type="number" class="rej-row"></input>
                 </li>
-
               </div>
-              <!-- T <span class="box chk" data-target="flag_T"></span><input type="hidden" name="flag_T" value="<?= h(v('flag_T','')) ?>">
-              &nbsp; W <span class="box chk" data-target="flag_W"></span><input type="hidden" name="flag_W" value="<?= h(v('flag_W','')) ?>">
-              &nbsp; B <span class="box chk" data-target="flag_B"></span><input type="hidden" name="flag_B" value="<?= h(v('flag_B','')) ?>"> -->
             </td>
           </tr>
           <tr><th>YIELD (%)</th><td><input type="text" name="yield_pct" value="<?= h(v('yield_pct','')) ?>"></td></tr>
@@ -873,6 +897,7 @@ function setupThicknessCalcs(prefix) {
 
   for (let i = 0; i < t1.length; i++) {
     cols.forEach(list => { if(list[i]) list[i].addEventListener('input', () => recalcRow(i)); });
+    cols.forEach(list => { if(list[i]) list[i].addEventListener('input', () => calculateDensity(prefix, i)); });
     // run once on load to populate if values already present
     recalcRow(i);
   }
@@ -882,6 +907,69 @@ window.addEventListener('DOMContentLoaded', () => {
   setupThicknessCalcs('qi_'); // page 1
   setupThicknessCalcs('p2_'); // page 2
 });
+
+// Function to calculate the density (g/cm³) for both pages
+function calculateDensity(prefix, i) {
+  const pelletWeight = parseFloat(document.getElementsByName(prefix + 'w[]')[i]?.value || 0);
+
+  // Get the single pellet diameter input (shared across pages)
+  const diaEl = document.querySelector('[name="pellet_dia"]'); // Target the shared pellet diameter input
+  const pelletDiameter = diaEl
+    ? parseFloat(String(diaEl.value).replace(',', '.').trim()) || 0
+    : 0;
+
+  const avgpelletThickness = parseFloat(document.getElementsByName(prefix + 'avg[]')[i]?.value || 0); // Use 'avg' for thickness
+
+  if (pelletWeight > 0 && pelletDiameter > 0 && avgpelletThickness > 0) {
+    pelletRadius_CM = (pelletDiameter / 20);
+    avgpelletThickness_CM = (avgpelletThickness / 10);
+
+    console.log('pelletWeight:', pelletWeight, 'pelletRadius_CM:', pelletRadius_CM, 'avgpelletThickness_CM:', avgpelletThickness_CM);
+    // Apply the formula for Density: (1.273 * W) / (D * D * AT)
+    density = (pelletWeight) / (3.142 * pelletRadius_CM * pelletRadius_CM * avgpelletThickness_CM); // Formula
+    // set density value with 3 decimal places without rounding
+    density = Math.floor(density * 1000) / 1000;
+    console.log('Calculated density:', density);
+    // Set the density value in the corresponding input field
+    document.getElementsByName(prefix + 'density[]')[i].value = density;
+
+  } else {
+    console.log('pelletWeight:', pelletWeight, 'pelletDiameter:', pelletDiameter, 'avgpelletThickness:', avgpelletThickness);
+    document.getElementsByName(prefix + 'density[]')[i].value = ''; // Clear if invalid input
+  }
+}
+
+// Event listeners to calculate density whenever there is a change in pellet weight, diameter, or thickness
+function setupDensityCalculations(prefix) {
+  console.log('Setting up density calculations for prefix:', prefix);
+  const weightInputs = document.getElementsByName(prefix + 'w[]');
+  console.log('Found weight inputs:', weightInputs);
+
+  // We use the same diameter input for both pages
+  const diaEl = document.querySelector('[name="pellet_dia"]');
+  console.log('Found pellet diameter input element:', diaEl);
+
+  const thkInputs = document.getElementsByName(prefix + 'avg[]');
+  console.log('Found thickness inputs:', thkInputs);
+
+  const thkAllInputs = document.getElementsByName(prefix + 'avg[]');
+
+
+  for (let i = 0; i < weightInputs.length; i++) {
+    weightInputs[i].addEventListener('input', () => calculateDensity(prefix, i));
+    diaEl.addEventListener('input', () => calculateDensity(prefix, i)); // Trigger calculation on diameter change
+    thkInputs[i].addEventListener('input', () => calculateDensity(prefix, i));
+    
+    // Run once on page load to populate if values already present
+    calculateDensity(prefix, i);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setupDensityCalculations('qi_'); // Page 1
+  setupDensityCalculations('p2_'); // Page 2
+});
+
 
 </script>
 </body>
