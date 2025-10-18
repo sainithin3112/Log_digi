@@ -756,15 +756,15 @@ textarea{resize:vertical}
               <div class="rej-div" style="display: flex; text-align: center; padding: 0;">
                 <li class="rej-list" style="list-style: none; display: flex; align-items: center; padding: 0;">
                   <label> T </label>
-                  <input type="number" class="rej-row"></input>
+                  <input type="number" class="rej-row" name="rejected_t"></input>
                 </li>
                 <li class="rej-list" style="list-style: none; display: flex; align-items: center; padding: 0;">
                   <label> W </label>
-                  <input type="number" class="rej-row"></input>
+                  <input type="number" class="rej-row" name="rejected_w"></input>
           </li>
                 <li class="rej-list" style="list-style: none; display: flex; align-items: center; padding: 0;">
                   <label> B </label>
-                  <input type="number" class="rej-row"></input>
+                  <input type="number" class="rej-row" name="rejected_b"></input>
                 </li>
               </div>
             </td>
@@ -970,6 +970,74 @@ window.addEventListener('DOMContentLoaded', () => {
   setupDensityCalculations('p2_'); // Page 2
 });
 
+// Function to calculate Yield and Accepted quantity
+function calculateYieldAndAccepted() {
+  const qtyProduced = parseInt(document.querySelector('[name="qty_produced"]').value || 0);
+  const rejectedT = parseInt(document.querySelector('[name="rejected_t"]').value);
+  const rejectedW = parseInt(document.querySelector('[name="rejected_w"]').value);
+  const rejectedB = parseInt(document.querySelector('[name="rejected_b"]').value);
+  const rejectedTotal = rejectedT + rejectedW + rejectedB;
+
+  // Calculate Accepted (A)
+  const accepted = qtyProduced - rejectedTotal;
+  if (!isNaN(rejectedT) && !isNaN(rejectedW) && !isNaN(rejectedB)) 
+    {
+      document.querySelector('[name="accepted_a"]').value = accepted;
+  }
+  else{
+      document.querySelector('[name="accepted_a"]').value = '';
+  }
+  
+  // Calculate Yield
+  const yieldPercent = (accepted / qtyProduced) * 100;
+  document.querySelector('[name="yield_pct"]').value = yieldPercent.toFixed(2);
+
+  // Check if the Accepted quantity matches
+  if (accepted < 0 || rejectedTotal > qtyProduced) {
+    alert('Error: The total rejected cannot exceed the quantity produced!');
+    return;
+  }
+
+  // Color formatting for Rejected (R) and Accepted (A)
+  document.querySelector('[name="rejected_t"]').style.color = 'red';
+  document.querySelector('[name="rejected_w"]').style.color = 'red';
+  document.querySelector('[name="rejected_b"]').style.color = 'red';
+  document.querySelector('[name="accepted_a"]').style.color = 'green';
+}
+
+// Function to auto-generate O/P Product Lot No.
+function autoGenerateLotNumber() {
+  const dateInput = document.querySelector('[name="date"]');
+  const date = new Date(dateInput.value);
+  const formattedDate = (date.getDate()).toString().padStart(2, '0') + (date.getMonth() + 1).toString().padStart(2, '0') + date.getFullYear().toString().slice(2, 4);
+
+  // Get the number of logs created today
+  const logCount = getLogCountForToday(formattedDate);
+
+  // Generate the Lot No. in the format DDMMYY-XXX
+  const lotNo = formattedDate + '-' + String(logCount).padStart(3, '0');
+  document.querySelector('[name="op_lot"]').value = lotNo;
+}
+
+// Dummy function to get the count of logs for today (to be replaced with actual count logic)
+function getLogCountForToday(formattedDate) {
+  const todayLogs = JSON.parse(localStorage.getItem('todayLogs') || '[]');
+  const todaysLogs = todayLogs.filter(log => log.lotNo.startsWith(formattedDate));
+  return todaysLogs.length + 1;
+}
+
+// Event listeners to update yield and lot number
+document.querySelector('[name="qty_produced"]').addEventListener('input', calculateYieldAndAccepted);
+document.querySelector('[name="rejected_t"]').addEventListener('input', calculateYieldAndAccepted);
+document.querySelector('[name="rejected_w"]').addEventListener('input', calculateYieldAndAccepted);
+document.querySelector('[name="rejected_b"]').addEventListener('input', calculateYieldAndAccepted);
+document.querySelector('[name="date"]').addEventListener('change', autoGenerateLotNumber);
+
+// Initialize calculations on page load
+window.addEventListener('DOMContentLoaded', () => {
+  calculateYieldAndAccepted(); // Initialize Yield and Accepted calculation
+  autoGenerateLotNumber(); // Generate O/P Product Lot No.
+});
 
 </script>
 </body>
