@@ -52,7 +52,6 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 <style>
 /* --- Material 3 Inspired Design Tokens (Variables) --- */
 :root {
-  /* FIX: Added transition for smoother theme changes */
   --theme-transition: background-color .3s ease, color .3s ease, border-color .3s ease;
 
   /* Primary Palette (RES Brand) */
@@ -78,10 +77,7 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
   --elevation-3: 0 5px 10px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
 }
 
-/* --- Dark Mode Overrides ---
-  FIX: Switched from @media query to a data-theme attribute on <html>.
-  This allows the JavaScript toggle to work reliably.
-*/
+/* --- Dark Mode Overrides --- */
 html[data-theme="dark"] {
   --md-primary: #b1c6ff; --md-on-primary: #00277f;
   --md-primary-container: #003aae; --md-on-primary-container: #d9e2ff;
@@ -112,7 +108,7 @@ body {
 
 /* --- Typography & Icons --- */
 .icon {
-  font-family: 'Material Symbols Rounded', sans-serif; /* This must match the font name */
+  font-family: 'Material Symbols Rounded', sans-serif;
   font-weight: normal; font-style: normal; font-size: 24px;
   line-height: 1; letter-spacing: normal; text-transform: none;
   display: inline-block; white-space: nowrap; word-wrap: normal;
@@ -226,7 +222,7 @@ body {
   border-radius: var(--radius-lg);
   padding: 20px;
   display: grid;
-  grid-template: "thumb content actions" auto / 56px 1fr auto; /* Grid areas and sizes */
+  grid-template: "thumb content actions" auto / 56px 1fr auto;
   gap: 16px;
   align-items: center;
   transition: var(--theme-transition), box-shadow .2s ease;
@@ -249,7 +245,7 @@ body {
   grid-area: actions;
   display: flex; gap: 8px; flex-wrap: nowrap;
 }
-.card-actions .btn { padding: 8px 14px; font-size: 0.8rem; } /* Smaller buttons in card */
+.card-actions .btn { padding: 8px 14px; font-size: 0.8rem; }
 .card-actions .btn .icon { font-size: 20px; }
 
 /* --- Empty State --- */
@@ -283,7 +279,7 @@ kbd {
   transition: opacity .3s ease, transform .3s ease;
 }
 
-/* --- Responsive Adjustments --- */
+/* --- Responsive --- */
 @media (max-width: 768px) {
   .topbar-inner, .wrap, footer { padding-left: 16px; padding-right: 16px; }
   .toolbar { flex-direction: column; align-items: stretch; gap: 16px; }
@@ -300,10 +296,9 @@ kbd {
 }
 @media (max-width: 480px) {
   .subtitle { display: none; }
-  .actions .btn:not(.primary) { display: none; } /* Hide Admin text button */
+  .actions .btn:not(.primary) { display: none; }
   .footer { flex-direction: column; align-items: center; text-align: center; }
 }
-
 </style>
 </head>
 <body>
@@ -320,7 +315,7 @@ kbd {
     <div class="actions">
       <a class="btn" href="admin.php"><span class="icon">settings</span> Admin</a>
       <button class="icon-btn" id="themeToggle" title="Toggle theme"><span class="icon">dark_mode</span></button>
-      <a class="btn primary" href="admin.php#new"><span class="icon filled">add</span> New Template</a>
+      <a class="btn primary" href="admin.php#new"><span class="icon filled"></span> Saved Logs</a>
     </div>
   </div>
 </header>
@@ -335,7 +330,7 @@ kbd {
     </div>
     <div class="controls-group" id="filters">
       <div class="filter-label">Category:</div>
-      </div>
+    </div>
   </div>
 
   <div class="stats">
@@ -352,7 +347,6 @@ kbd {
       </div>
     <?php else: ?>
       <?php foreach($templates as $t):
-        // --- Prepare data for each template ---
         $id = (string)($t['id'] ?? '');
         $name = (string)($t['name'] ?? $id);
         $category = (string)($t['category'] ?? 'General');
@@ -383,7 +377,7 @@ kbd {
         <div class="card-actions">
           <button class="icon-btn star" title="Toggle favorite" data-id="<?= h($id) ?>"><span class="icon">star</span></button>
           <button class="btn" data-action="copy-id" data-id="<?= h($id) ?>"><span class="icon">content_copy</span> Copy ID</button>
-          <a class="btn primary" href="run.php?id=<?= urlencode($id) ?>"><span class="icon">play_arrow</span> Open</a>
+          <a class="btn primary" href="run.php?id=<?= urlencode($id) ?>"><span class="icon"></span> Initialize</a>
         </div>
       </div>
       <?php endforeach; ?>
@@ -395,6 +389,66 @@ kbd {
   <div>Shortcuts: <kbd>/</kbd> search · <kbd>F</kbd> favorites</div>
   <div>© <?= date('Y') ?> Renewable Energy Systems</div>
 </footer>
+
+<!-- Initialize modal (Pellet Manufacturing – Anode) -->
+<div id="initPelletModal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:9999">
+  <div style="background:var(--md-surface);color:var(--md-on-surface);border:1px solid var(--md-outline-variant);
+              width:min(720px,95vw);max-height:90vh;overflow:auto;border-radius:16px;padding:20px;box-shadow:var(--elevation-3)">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+      <div class="thumb" aria-hidden="true">PM</div>
+      <div>
+        <h3 style="margin:0">Initialize – Pellet Manufacturing (Anode)</h3>
+      </div>
+      <button type="button" id="initClose" class="icon-btn" style="margin-left:auto"><span class="icon">close</span></button>
+    </div>
+
+    <form id="initPelletForm" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <!-- Header area -->
+      <!-- <label>Battery Code
+        <input name="battery_code" type="text" placeholder="e.g. LI-PRD-RC-28A" />
+      </label> -->
+      <label>PID NO.
+        <input name="pid_no" type="text" placeholder="e.g. 021" />
+      </label>
+      <label>BATTERY NO(s)
+        <input name="battery_no" type="text" placeholder="e.g. 001" />
+      </label>
+
+      <!-- Page 2 – I/P product header -->
+      <label>I/P PRODUCT CODE
+        <input name="ip_code" type="text" placeholder="e.g. ANP-35-ZZ" />
+      </label>
+      <label>I/P PRODUCT LOT NO.
+        <input name="ip_lot" type="text" placeholder="e.g. 211025-001" />
+      </label>
+      <label>WEIGHT (g)
+        <input name="ip_weight" type="text" inputmode="decimal" placeholder="e.g. 10" />
+      </label>
+
+      <!-- Page 2 – row of specs above table -->
+      <label>PELLET WT. RANGE AS PER PID (g)
+        <input name="pellet_weight_0" type="text" placeholder="e.g. 0.19-0.21" />
+      </label>
+      <label>PELLET DIA (mm) (D)
+        <input name="pellet_dia" type="text" inputmode="decimal" placeholder="e.g. 30" />
+      </label>
+      <label>PELLET THK. RANGE AS PER PID (mm)
+        <input name="pellet_thk_range_0" type="text" placeholder="e.g. 0.26-0.32" />
+      </label>
+      <label>PRESSURE (kg/cm²)
+        <input name="pressure_0" type="text" inputmode="decimal" placeholder="e.g. 175" />
+      </label>
+      <label>COMPRESSION TIME (sec)
+        <input name="compression_0" type="text" inputmode="decimal" placeholder="e.g. 06" />
+      </label>
+
+      <div style="grid-column:1/-1;display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+        <button type="button" class="btn" id="initCancel">Cancel</button>
+        <button type="submit" class="btn primary">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -447,7 +501,7 @@ kbd {
     init() {
       this.generateFilterChips();
       this.updateFavStars();
-      this.render(); // Initial render
+      this.render();
       q.addEventListener('input', () => this.render());
     },
     generateFilterChips() {
@@ -460,7 +514,7 @@ kbd {
         chip.dataset.category = cat;
         chip.setAttribute('aria-pressed', cat === 'All' ? 'true' : 'false');
         chip.addEventListener('click', () => {
-          $$('[data-category]').forEach(c => c.setAttribute('aria-pressed', 'false'));
+          $$('.chip[data-category]').forEach(c => c.setAttribute('aria-pressed', 'false'));
           chip.setAttribute('aria-pressed', 'true');
           this.render();
         });
@@ -472,8 +526,7 @@ kbd {
       const query = q.value.trim().toLowerCase();
       const activeCatChip = $('[data-category][aria-pressed="true"]');
       const category = (activeCatChip && activeCatChip.dataset.category !== 'All') ? activeCatChip.dataset.category : null;
-      const onlyFavs = favs.size > 0 && ($('.chip[aria-pressed="true"][data-category="Favorites"]') !== null);
-      return { query, category, onlyFavs };
+      return { query, category };
     },
     render() {
       const { query, category } = this.getActiveFilters();
@@ -482,11 +535,9 @@ kbd {
         const name = card.dataset.name.toLowerCase();
         const id = card.dataset.id.toLowerCase();
         const cardCategory = card.dataset.category;
-        
         let isVisible = true;
         if (query && !(name.includes(query) || id.includes(query))) isVisible = false;
         if (category && cardCategory !== category) isVisible = false;
-
         card.style.display = isVisible ? '' : 'none';
         if (isVisible) visibleCount++;
       });
@@ -521,9 +572,6 @@ kbd {
         favs.has(id) ? favs.delete(id) : favs.add(id);
         localStorage.setItem(FAVS_KEY, JSON.stringify([...favs]));
         renderController.updateFavStars();
-        if ($('.chip[data-category="Favorites"][aria-pressed="true"]')) {
-            renderController.render();
-        }
       }
     });
 
@@ -539,12 +587,10 @@ kbd {
   function toast(msg) {
     const existing = $('.toast');
     if (existing) existing.remove();
-
     const t = document.createElement('div');
     t.className = 'toast';
     t.textContent = msg;
     document.body.appendChild(t);
-
     setTimeout(() => { t.style.opacity = 1; t.style.transform = 'translateX(-50%) translateY(-10px)'; }, 10);
     setTimeout(() => { t.style.opacity = 0; t.style.transform = 'translateX(-50%) translateY(0)'; }, 2000);
     setTimeout(() => t.remove(), 2300);
@@ -552,11 +598,11 @@ kbd {
 
   // --- App Initialization ---
   function init() {
-    if (!cards.length && emptyState) {
-        emptyState.style.display = '';
-        $('.toolbar').style.display = 'none';
-        $('.stats').style.display = 'none';
-        return;
+    if (!cards.length && $('#empty')) {
+      $('#empty').style.display = '';
+      $('.toolbar').style.display = 'none';
+      $('.stats').style.display = 'none';
+      return;
     }
     countAll.textContent = cards.length;
     themeController.init();
@@ -567,6 +613,59 @@ kbd {
   // Run the app
   init();
 
+  /* ---------- Initialize flow for Pellet Manufacturing (Anode) ---------- */
+  const PELLET_ID = 'LI-PRD-RC-28A';
+  const MODAL = document.getElementById('initPelletModal');
+  const FORM  = document.getElementById('initPelletForm');
+
+  const openModal  = () => MODAL.style.display = 'flex';
+  const closeModal = () => MODAL.style.display = 'none';
+
+  // Intercept Initialize click only for Pellet template
+  document.body.addEventListener('click', (e) => {
+    const btn = e.target.closest('a.btn.primary[href^="run.php?id="]');
+    if (!btn) return;
+    const url = new URL(btn.getAttribute('href'), location.href);
+    const id  = url.searchParams.get('id');
+    if (id === PELLET_ID) {
+      e.preventDefault();
+      openModal();
+    }
+  });
+
+  // Modal basic close actions
+  document.getElementById('initClose').addEventListener('click', closeModal);
+  document.getElementById('initCancel').addEventListener('click', closeModal);
+  MODAL.addEventListener('click', (e) => { if (e.target === MODAL) closeModal(); });
+
+  // Submit: stash data and navigate to run.php
+  FORM.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(FORM);
+    const payload = Object.fromEntries(fd.entries());
+
+    const initData = {
+      // Header (optional to set LOG ID)
+      log_id:         payload.battery_code || '',
+      pid_no:         payload.pid_no || '',
+      battery_no:     payload.battery_no || '',
+
+      // Page 2 – I/P header
+      ip_code:        payload.ip_code || '',
+      ip_lot:         payload.ip_lot || '',
+      ip_weight:      payload.ip_weight || '',
+
+      // Specs row (single row in your template)
+      pellet_weight_0:     payload.pellet_weight_0 || '',
+      pellet_dia:          payload.pellet_dia || '',
+      pellet_thk_range_0:  payload.pellet_thk_range_0 || '',
+      pressure_0:          payload.pressure_0 || '',
+      compression_0:       payload.compression_0 || ''
+    };
+
+    sessionStorage.setItem('init:' + PELLET_ID, JSON.stringify(initData));
+    location.href = 'run.php?id=' + encodeURIComponent(PELLET_ID);
+  });
 })();
 </script>
 </body>

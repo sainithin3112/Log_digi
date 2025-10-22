@@ -476,7 +476,7 @@ textarea{resize:vertical}
         </div>
 </div>
     </td>
-    
+
     </tr>
     <tr>
       <td style="padding:0">
@@ -484,10 +484,10 @@ textarea{resize:vertical}
           <colgroup><col style="width:25%"><col style="width:25%"><col style="width:25%"><col style="width:25%"></colgroup>
           <tr class="center"><th>GLOVE BOX ID</th><th>H PRESS ID</th><th>BALANCE ID</th><th>THICKNESS GAUGE ID</th></tr>
           <tr>
-            <td><input type="text" name="gb_id" value="<?= h(v('gb_id','')) ?>"></td>
-            <td><input type="text" name="hp_id" value="<?= h(v('hp_id','')) ?>"></td>
-            <td><input type="text" name="bal_id" value="<?= h(v('bal_id','')) ?>"></td>
-            <td><input type="text" name="thk_id" value="<?= h(v('thk_id','')) ?>"></td>
+            <td><input type="text" name="gb_id" value="PRD-025"></td>
+            <td><input type="text" name="hp_id" value="PRD-191"></td>
+            <td><input type="text" name="bal_id" value="PRD-316"></td>
+            <td><input type="text" name="thk_id" value="PRD-313"></td>
           </tr>
           <tr class="center"><th>CLEANING</th><th>CLEANING</th><th>CLEANING</th><th>CLEANING</th></tr>
           <tr>
@@ -790,11 +790,25 @@ textarea{resize:vertical}
   </table>
 
   <table class="tbl narrow" style="margin-top:8px">
-    <colgroup><col style="width:25%"><col style="width:75%"></colgroup>
-    <tr class="center"><th>OPERATOR NAME</th><th>PRD OBSERVATIONS/SIGNATURE</th></tr>
+    <colgroup><col style="width:13%"><col style="width:50%"><col style="width:17%"><col style="width:20%"></colgroup>
+    <tr class="center">
+      <th>OPERATOR NAME</th>
+      <th>PRD OBSERVATIONS/SIGNATURE</th>
+      <th rowspan="0" style="padding:0;vertical-align:top; font-size: 13px;">
+        <div>
+            <ul style="padding: 10px;">
+                <li style="list-style: none">T-THICKNESS NOT IN RANGE</li>
+                <li style="list-style: none">W-WEIGHT NOT IN RANGE</li>
+                <li style="list-style: none">B-BREAKAGE IN PELLETS</li>
+            </ul>
+        </div>
+      </th>
+        <th>DWG. TO MEASURE THK. OF PELLET</th>
+    </tr>
     <tr>
       <td><input type="text" name="operator_name" value="<?= h(v('operator_name','')) ?>"></td>
       <td><textarea name="prd_obs" style="min-height:70px"><?= h(v('prd_obs','')) ?></textarea></td>
+      <td class="center"><div><img src="assets/dwg.png"></div></td>
     </tr>
   </table>
 
@@ -1038,6 +1052,47 @@ window.addEventListener('DOMContentLoaded', () => {
   calculateYieldAndAccepted(); // Initialize Yield and Accepted calculation
   autoGenerateLotNumber(); // Generate O/P Product Lot No.
 });
+
+/* ---------- Apply Initialize data (from index.php modal) ---------- */
+(function applyInitData(){
+  const KEY = 'init:LI-PRD-RC-28A';
+  const raw = sessionStorage.getItem(KEY);
+  if (!raw) return;
+
+  let data = {};
+  try { data = JSON.parse(raw) || {}; } catch(e) { console.warn('Init parse error', e); }
+
+  function setVal(name, val) {
+    if (val == null || val === '') return;
+    const el = document.querySelector('[name="'+name+'"]');
+    if (el) el.value = val;
+  }
+  function setFirst(nameArrayBase, val) {
+    if (val == null || val === '') return;
+    const list = document.getElementsByName(nameArrayBase + '[]');
+    if (list && list[0]) list[0].value = val;
+  }
+
+  // Header (only if you wish to apply)
+  setVal('pid_no', data.pid_no);
+  setVal('battery_no', data.battery_no);
+  if (data.log_id) setVal('log_id', data.log_id);
+
+  // Page 2 header
+  setVal('ip_code', data.ip_code);
+  setVal('ip_lot', data.ip_lot);
+  setVal('ip_weight', data.ip_weight);
+
+  // Specs row above the page-2 table
+  setFirst('pellet_weight',    data.pellet_weight_0);
+  setVal  ('pellet_dia',       data.pellet_dia);           // single input in your template
+  setFirst('pellet_thk_range', data.pellet_thk_range_0);
+  setFirst('pressure',         data.pressure_0);
+  setFirst('compression',      data.compression_0);
+
+  // Done—don’t apply again if user refreshes
+  sessionStorage.removeItem(KEY);
+})();
 
 </script>
 </body>
