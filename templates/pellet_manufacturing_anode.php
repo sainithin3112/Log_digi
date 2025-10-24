@@ -1,4 +1,15 @@
 <?php
+
+/* get param from URL */
+function g($name, $fallback=''){
+  return isset($_GET[$name]) ? $_GET[$name] : $fallback;
+}
+
+// display all errors for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 // Template: Pellet Manufacturing (Anode) — 2 pages
 // Saves JSON to data/<safe(TEMPLATE_ID)>.json
 date_default_timezone_set('Asia/Kolkata');
@@ -398,8 +409,8 @@ textarea{resize:vertical}
 <input type="hidden" name="__action" id="__action" value="">
 
 <div class="bar">
-  <a class="btn light" href="index.php">Home</a>
-  <a class="btn light" href="admin.php" target="_blank">Admin</a>
+  <a class="btn light" href="../index.php">Home</a>
+  <a class="btn light" href="../admin.php" target="_blank">Admin</a>
   <button type="button" class="btn light" onclick="openPreview()">Preview</button>
   <button type="button" class="btn" onclick="saveForm()">Save</button>
   <button type="button" class="btn secondary" onclick="window.print()">Print (as-is)</button>
@@ -414,7 +425,7 @@ textarea{resize:vertical}
       <col style="width:10%"><col style="width:22%"><col style="width:10%"><col style="width:12%"><col style="width:10%"><col style="width:10%"><col style="width:12%"><col style="width:14%">
     </colgroup>
     <tr>
-      <td class="logo-cell" rowspan="2"><div class="logo"><img src="assets/logo.png" alt="RES"></div></td>
+      <td class="logo-cell" rowspan="2"><div class="logo"><img src="../assets/logo.png" alt="RES"></div></td>
       <th class="center">NAME OF WORK INSTRUCTION (WI)</th>
       <th class="center">WI NO.</th>
       <th class="center">LOG ID</th>
@@ -429,16 +440,16 @@ textarea{resize:vertical}
       <td><input type="text" name="log_id" value="<?= h(v('log_id',$TEMPLATE_ID)) ?>"></td>
       <td>  <input type="text" name="log_sr_no"
          value="<?= h(v('log_sr_no', $_POST['log_sr_no'] ?? next_sr_no($logfile))) ?>"></td> <!-- EDITABLE -->
-      <td><input type="text" name="pid_no" value="<?= h(v('pid_no','')) ?>"></td>
-      <td><input type="text" name="battery_no" value="<?= h(v('battery_no','')) ?>"></td>
+      <td><input type="text" name="pid_no" value="<?= h(g('pid_no', v('pid_no',''))) ?>"></td>
+      <td><input type="text" name="battery_no" value="<?= h(g('battery_no', v('battery_no',''))) ?>"></td>
       <td><input type="date" name="date" value="<?= h(v('date','')) ?>"></td>
     </tr>
   </table>
 
   <!-- Safety -->
   <table class="tbl narrow" style="margin-top:8px">
-    <colgroup><col style="width:33%"><col style="width:33%"><col style="width:34%"></colgroup>
-    <tr><th class="center">SAFETY CHECKS (OPERATOR)</th><th class="center">SAFETY CHECKS (EARTHING)</th><th class="center">SAFETY COMMENTS &amp; CLEARANCE</th></tr>
+    <colgroup><col style="width:33%"><col style="width:33%"><col style="width:26%"><col style="width:08%"></colgroup>
+    <tr><th class="center">SAFETY CHECKS (OPERATOR)</th><th class="center">SAFETY CHECKS (EARTHING)</th><th class="center">SAFETY COMMENTS</th><th class="center">CLEARANCE</th></tr>
     <tr>
       <td class="center">
         APRON <span class="box chk" data-target="op_apron"></span><input type="hidden" name="op_apron" value="<?= h(v('op_apron','')) ?>">
@@ -450,7 +461,8 @@ textarea{resize:vertical}
         &nbsp; H PRESS <span class="box chk" data-target="earth_hp"></span><input type="hidden" name="earth_hp" value="<?= h(v('earth_hp','')) ?>">
         &nbsp; OPERATOR <span class="box chk" data-target="earth_op"></span><input type="hidden" name="earth_op" value="<?= h(v('earth_op','')) ?>">
       </td>
-      <td><textarea name="safety_comments" placeholder="Comments / Clearance"><?= h(v('safety_comments','')) ?></textarea></td>
+      <td><textarea name="safety_comments"><?= h(v('safety_comments','')) ?></textarea></td>
+      <td class="center"><span class="box chk" data-target="clearance"></span><input type="hidden" name="clearance" value="<?= h(v('clearance','')) ?>"></td>
     </tr>
   </table>
 
@@ -639,43 +651,45 @@ textarea{resize:vertical}
     </tr>
     <tr>
       <td><input type="text" name="ip_name" value="<?= h(v('ip_name','ANODE POWDER')) ?>"></td>
-      <td><input type="text" name="ip_code" value="<?= h(v('ip_code','ANP-06-')) ?>"></td>
-      <td><input type="text" name="ip_lot" value="<?= h(v('ip_lot','')) ?>"></td>
-      <td><input type="text" name="ip_weight" value="<?= h(v('ip_weight','')) ?>"></td>
+      <td><input type="text" name="ip_code"   value="<?= h(g('ip_code',   v('ip_code','ANP-06-'))) ?>"></td>
+      <td><input type="text" name="ip_lot"    value="<?= h(g('ip_lot',    v('ip_lot',''))) ?>"></td>
+      <td><input type="text" name="ip_weight" value="<?= h(g('ip_weight', v('ip_weight',''))) ?>"></td>
       <td><input type="date" name="ip_exp" value="<?= h(v('ip_exp','')) ?>"></td>
       <td><input type="time" name="start_time" value="<?= h(v('start_time','')) ?>"></td>
       <td><input type="time" name="end_time" value="<?= h(v('end_time','')) ?>"></td>
     </tr>
   </table>
   <table class="tbl narrow" style="margin-top:8px">
-    <colgroup><col style="width:12%"><col style="width:08%"><col style="width:12%"><col style="width:08%"><col style="width:14%"><col style="width:08%"><col style="width:09%"><col style="width:08%"><col style="width:13%"><col style="width:08%"></colgroup>
-    <tr class="center">
-      <th>PELLET WT. RANGE AS PER PID (g)
-          <td>
-            <input type="text" name="pellet_weight[]" value="<?= h($_POST['pellet_weight'][$i]??'') ?>">
-          </td>
-      </th>
-      <th>PELLET DIA (mm) (D)
-          <td>
-            <input type="text" name="pellet_dia" value="<?= h($_POST['pellet_dia'][$i]??'') ?>">
-          </td>
-      </th>
-      <th>PELLET THK. RANGE AS PER PID (mm)
-          <td>
-            <input type="text" name="pellet_thk_range[]" value="<?= h($_POST['pellet_thk_range'][$i]??'') ?>">
-          </td>
-      </th>
-      <th>PRESSURE (kg/cm²)
-          <td>
-            <input type="text" name="pressure[]" value="<?= h($_POST['pressure'][$i]??'') ?>">
-          </td>
-      </th>
-      <th>COMPRESSION TIME (sec)
-          <td>
-            <input type="text" name="compression[]" value="<?= h($_POST['compression'][$i]??'') ?>">
-          </td>
-    </tr>
+  <colgroup><col style="width:12%"><col style="width:08%"><col style="width:12%"><col style="width:08%"><col style="width:14%"><col style="width:08%"><col style="width:09%"><col style="width:08%"><col style="width:13%"><col style="width:08%"></colgroup>
+  <tr class="center">
+    <th>PELLET WT. RANGE AS PER PID (g)
+      <td>
+        <input type="text" name="pellet_weight[]" value="<?= h(g('pellet_weight_range', $_POST['pellet_weight'][0] ?? '')) ?>">
+      </td>
+    </th>
+    <th>PELLET DIA (mm) (D)
+      <td>
+        <input type="text" name="pellet_dia" value="<?= h(g('pellet_dia', $_POST['pellet_dia'] ?? '')) ?>">
+      </td>
+    </th>
+    <th>PELLET THK. RANGE AS PER PID (mm)
+      <td>
+        <input type="text" name="pellet_thk_range[]" value="<?= h(g('pellet_thk_range', $_POST['pellet_thk_range'][0] ?? '')) ?>">
+      </td>
+    </th>
+    <th>PRESSURE (kg/cm²)
+      <td>
+        <input type="text" name="pressure[]" value="<?= h(g('pressure', $_POST['pressure'][0] ?? '')) ?>">
+      </td>
+    </th>
+    <th>COMPRESSION TIME (sec)
+      <td>
+        <input type="text" name="compression[]" value="<?= h(g('compression', $_POST['compression'][0] ?? '')) ?>">
+      </td>
+    </th>
+  </tr>
   </table>
+  <!-- Quality Inspection (Page 2) -->
   <table class="tbl narrow" style="margin-top:8px">
     <tr class="center"><th rowspan="2" style="width:10%">TIME OF INSPECTION</th>
       <th rowspan="2" style="width:10%">PELLET NO(s) (FROM - TO)</th>
@@ -778,10 +792,10 @@ textarea{resize:vertical}
   <table class="tbl narrow" style="margin-top:8px">
     <colgroup><col style="width:15%"><col style="width:15%"><col style="width:15%"><col style="width:15%"><col style="width:40%"></colgroup>
     <tr class="center">
-      <th>ACTUAL MH</th><th>LOST MH</th><th>MH/PELLET</th><th>LEFTOVER QTY (g)</th><th>STORAGE CONTAINER WITH LABEL (POWDER)</th>
+      <th>STANDARD MH</th><th>LOST MH</th><th>MH/PELLET</th><th>LEFTOVER QTY (g)</th><th>STORAGE CONTAINER WITH LABEL (POWDER)</th>
     </tr>
     <tr>
-      <td><input type="text" name="actual_mh" value="<?= h(v('actual_mh','')) ?>"></td>
+      <td><input type="text" name="standard_mh" value="<?= h(g('standard_mh', v('standard_mh',''))) ?>"></td>
       <td><input type="text" name="lost_mh" value="<?= h(v('lost_mh','')) ?>"></td>
       <td><input type="text" name="mh_pellet" value="<?= h(v('mh_pellet','')) ?>"></td>
       <td><input type="text" name="leftover_qty" value="<?= h(v('leftover_qty','')) ?>"></td>
@@ -808,7 +822,7 @@ textarea{resize:vertical}
     <tr>
       <td><input type="text" name="operator_name" value="<?= h(v('operator_name','')) ?>"></td>
       <td><textarea name="prd_obs" style="min-height:70px"><?= h(v('prd_obs','')) ?></textarea></td>
-      <td class="center"><div><img src="assets/dwg.png"></div></td>
+      <td class="center"><div><img src="../assets/dwg.png"></div></td>
     </tr>
   </table>
 
@@ -818,12 +832,14 @@ textarea{resize:vertical}
 </form>
 
 <script>
+
 /* tick / cross tri-state boxes */
 function applyState(box, state){
   box.classList.remove('tick','cross'); box.textContent = '';
   if(state==='tick'){ box.classList.add('tick'); box.textContent='✓'; }
   else if(state==='cross'){ box.classList.add('cross'); box.textContent='✗'; }
 }
+
 function initCheckboxes(){
   document.querySelectorAll('.chk').forEach(box=>{
     const name = box.dataset.target;
@@ -1053,47 +1069,173 @@ window.addEventListener('DOMContentLoaded', () => {
   autoGenerateLotNumber(); // Generate O/P Product Lot No.
 });
 
-/* ---------- Apply Initialize data (from index.php modal) ---------- */
-(function applyInitData(){
-  const KEY = 'init:LI-PRD-RC-28A';
-  const raw = sessionStorage.getItem(KEY);
+// --------- time helpers ----------
+function parseHM(str){
+  if(!str) return null;
+  const [h,m] = String(str).split(':').map(n=>parseInt(n,10));
+  if(Number.isNaN(h) || Number.isNaN(m)) return null;
+  return h*60 + m; // total minutes
+}
+function diffMinutes(startStr, endStr){
+  const s = parseHM(startStr), e = parseHM(endStr);
+  if(s==null || e==null) return null;
+  let d = e - s;
+  if(d < 0) d += 24*60;     // handle overnight
+  return d;                 // minutes
+}
+// 2-digit pad
+const pad2 = n => String(n).padStart(2,'0');
+
+// Minutes -> "MM min SS sec" (rounded to nearest second)
+function formatMinSec(mins){
+  if(mins == null || !Number.isFinite(mins)) return '';
+  const totalSec = Math.max(0, Math.round(mins * 60));
+  const mm = Math.floor(totalSec / 60);
+  const ss = totalSec % 60;
+  return `${pad2(mm)} min ${pad2(ss)} sec`;
+}
+
+// Minutes -> "N min" (no seconds, clamps to >=0)
+function formatMinutes(mins){
+  if(mins == null || !Number.isFinite(mins)) return '';
+  const m = Math.max(0, Math.round(mins));
+  return `${m} min`;
+}
+
+// ---------- main calc ----------
+function recalcMH(){
+  const startEl  = document.querySelector('[name="start_time"]');
+  const endEl    = document.querySelector('[name="end_time"]');
+  const standardEl = document.querySelector('[name="standard_mh"]');   // minutes, numeric
+  const lostEl   = document.querySelector('[name="lost_mh"]');     // output (formatted)
+  const mhPelEl  = document.querySelector('[name="mh_pellet"]');   // output (formatted MM min SS sec)
+  const qtyEl    = document.querySelector('[name="qty_produced"]');
+
+  if(!startEl || !endEl || !standardEl || !lostEl || !mhPelEl || !qtyEl) return; 
+
+  const duration = diffMinutes(startEl.value, endEl.value);       // minutes (can be null)
+  const standardStr = String(standardEl.value).trim();
+  const standard = standardStr === '' ? null
+                : (parseFloat(standardStr.replace(',', '.')));      // null means "no value"
+  const qty    = parseFloat(String(qtyEl.value).replace(',', '.')) || 0;
+
+  // ---- Lost MH ----
+  // Only compute when Standard MH has a value (not empty)
+  if(duration != null && standard != null && Number.isFinite(standard)){
+    const lost = duration - standard;         // minutes
+    // if negative, clamp to 0 (or leave blank if you prefer)
+    lostEl.value = formatMinutes(lost);
+  } else {
+    lostEl.value = '';                       // do not compute if Standard MH is empty or duration missing
+  }
+
+  // ---- MH / Pellet (minutes per pellet) ----
+  // MH/Pellet = duration / qty -> show as "MM min SS sec"
+  if(duration != null && duration > 0 && qty > 0){
+    const minPerPellet = duration / qty;     // minutes per pellet
+    mhPelEl.value = formatMinSec(minPerPellet);
+  } else {
+    mhPelEl.value = '';
+  }
+}
+
+// ---------- listeners ----------
+function initMH(){
+  console.log('Initializing MH calculations');
+  ['[name="start_time"]','[name="end_time"]',
+   '[name="standard_mh"]','[name="qty_produced"]'
+  ].forEach(sel=>{
+    const el = document.querySelector(sel);
+    if(el) el.addEventListener('input', recalcMH);
+  });
+  recalcMH(); // initial render
+}
+
+window.addEventListener('DOMContentLoaded', initMH);
+</script>
+
+<script>
+/* --------- Prefill from URL param 'prefill' (base64-encoded JSON) ---------- */
+(function () {
+  const qs = new URLSearchParams(location.search);
+  const pf = qs.get('prefill');
+  if (!pf) return;
+
+  // Decode: supports regular/base64url. Your original used escape(), which is deprecated.
+  function b64decode(s) {
+    try {
+      // normalize base64url to base64
+      s = s.replace(/-/g, '+').replace(/_/g, '/');
+      // add padding if missing
+      while (s.length % 4) s += '=';
+      return atob(s);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  let raw = b64decode(pf);
   if (!raw) return;
+  // Some encoders wrap JSON with encodeURIComponent before base64. Try both paths.
+  let jsonText = raw;
+  try { jsonText = decodeURIComponent(raw); } catch (_) {}
 
-  let data = {};
-  try { data = JSON.parse(raw) || {}; } catch(e) { console.warn('Init parse error', e); }
-
-  function setVal(name, val) {
-    if (val == null || val === '') return;
-    const el = document.querySelector('[name="'+name+'"]');
-    if (el) el.value = val;
-  }
-  function setFirst(nameArrayBase, val) {
-    if (val == null || val === '') return;
-    const list = document.getElementsByName(nameArrayBase + '[]');
-    if (list && list[0]) list[0].value = val;
+  let data = null;
+  try {
+    data = JSON.parse(jsonText);
+  } catch (e) {
+    console.warn('Bad prefill JSON', e);
+    return;
   }
 
-  // Header (only if you wish to apply)
-  setVal('pid_no', data.pid_no);
-  setVal('battery_no', data.battery_no);
-  if (data.log_id) setVal('log_id', data.log_id);
+  // Helpers
+  function setVal(selector, value) {
+    const el = document.querySelector(selector);
+    if (el != null && value != null) el.value = value;
+  }
+  // For fields named like name="pellet_weight[]" (may be 1+ inputs)
+  function setVals(selector, values) {
+    if (values == null) return;
+    const els = document.querySelectorAll(selector);
+    if (!els.length) return;
+    // If a single value is provided, set the first (common pattern)
+    if (!Array.isArray(values)) {
+      els[0].value = values;
+      return;
+    }
+    values.forEach((v, i) => {
+      if (els[i]) els[i].value = v;
+    });
+  }
+
+  // Header
+  setVal('[name="pid_no"]', data.pid_no);
+  setVal('[name="battery_no"]', data.battery_no);
 
   // Page 2 header
-  setVal('ip_code', data.ip_code);
-  setVal('ip_lot', data.ip_lot);
-  setVal('ip_weight', data.ip_weight);
+  setVal('[name="ip_code"]', data.ip_code);
+  setVal('[name="ip_lot"]', data.ip_lot);
+  setVal('[name="ip_weight"]', data.ip_weight);
 
-  // Specs row above the page-2 table
-  setFirst('pellet_weight',    data.pellet_weight_0);
-  setVal  ('pellet_dia',       data.pellet_dia);           // single input in your template
-  setFirst('pellet_thk_range', data.pellet_thk_range_0);
-  setFirst('pressure',         data.pressure_0);
-  setFirst('compression',      data.compression_0);
+  // Spec block
+  setVal('[name="pellet_dia"]', data.pellet_dia);
 
-  // Done—don’t apply again if user refreshes
-  sessionStorage.removeItem(KEY);
+  // If your HTML truly has multiple inputs with name="pellet_weight[]", pass an array in data.pellet_weight
+  // Example data: { pellet_weight: [ "1.20–1.30 g", "1.25 g target" ] }
+  setVals('[name="pellet_weight[]"]', data.pellet_weight ?? data.pellet_weight_range);
+
+  setVals('[name="pellet_thk_range[]"]', data.pellet_thk_range);
+  setVals('[name="pressure[]"]', data.pressure);
+  setVals('[name="compression[]"]', data.compression);
+
+  // Standard MH (minutes) -> actual_mh input
+  setVal('[name="actual_mh"]', data.standard_mh);
+
+  // Optional: battery_code mapped to any field you like:
+  // setVal('[name="log_id"]', data.battery_code);
 })();
-
 </script>
+
+
 </body>
 </html>

@@ -128,7 +128,7 @@ usort($rows, fn($A,$B)=> (strtotime($B[1]['meta']['created_at'] ?? '1970-01-01')
           <td><?= h($e['sec5_output']['mh_stack'] ?? '') ?></td>
           <td><?= h($e['sec5_output']['lost_mh'] ?? '') ?></td>
           <td class="center">
-            <a class="btn light" style="border: none;background: none;text-align: center;padding: 0;"type="button" href="run.php?id=<?= urlencode($t) ?>&load=<?= urlencode($uid) ?>&autopreview=1" target="_blank">
+            <a class="btn light" style="border: none;background: none;text-align: center;padding: 0;"type="button" href="templates/pellet_manufacturing_anode?load=<?= urlencode($uid) ?>&autopreview=1" target="_blank">
               <i class="fa fa-eye"></i>
             </a>
           </td>

@@ -1,11 +1,8 @@
 <?php
-// --- Data Setup ---
-// In a real application, this would come from a database.
-// For this example, we'll use the manifest.json file.
+// --- Data Setup (same as before) ---
 $manifestPath = __DIR__ . '/templates/manifest.json';
 $manifest = json_decode(@file_get_contents($manifestPath), true) ?: [];
 $templates = $manifest['templates'] ?? [
-    // --- Mock Data if manifest.json is empty ---
     [
         'id' => 'LI-PRD-RC-28A',
         'name' => 'Pellet Manufacturing (Anode)',
@@ -23,23 +20,13 @@ $templates = $manifest['templates'] ?? [
         'pages' => 8,
         'updated' => '2025-10-14',
         'desc' => 'Detailed assembly log for the 2S4P configuration battery stack.'
-    ],
-    [
-        'id' => 'QA-FIN-RC-05B',
-        'name' => 'Final QA Inspection',
-        'category' => 'Quality',
-        'tags' => ['Final Product', 'Inspection'],
-        'pages' => 3,
-        'updated' => '2025-09-28',
-        'desc' => 'Final quality assurance checklist before product dispatch.'
     ]
 ];
 
-// Helper function for safe HTML output
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -50,622 +37,252 @@ function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
 
 <style>
-/* --- Material 3 Inspired Design Tokens (Variables) --- */
-:root {
+:root{
   --theme-transition: background-color .3s ease, color .3s ease, border-color .3s ease;
+  --md-primary:#1D2C78; --md-on-primary:#fff; --md-primary-container:#d9e2ff; --md-on-primary-container:#00006c;
+  --md-secondary:#585e71; --md-on-secondary:#fff; --md-secondary-container:#dbe2f9; --md-on-secondary-container:#151b2c;
+  --md-surface:#fcfcff; --md-on-surface:#1a1c22;
+  --md-surface-container:#eff0f4; --md-surface-container-low:#f5f6fa; --md-surface-container-high:#e9eaee; --md-surface-container-highest:#e3e4e9;
+  --md-outline:#757780; --md-outline-variant:#c3c6d0; --md-shadow:#000;
+  --radius-sm:8px; --radius-md:12px; --radius-lg:16px; --radius-full:999px;
+  --elevation-1:0 1px 2px rgba(0,0,0,.08),0 1px 3px rgba(0,0,0,.05);
+  --elevation-2:0 3px 6px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+  --elevation-3:0 5px 10px rgba(0,0,0,.12),0 2px 4px rgba(0,0,0,.08);
+}
+html[data-theme="dark"]{
+  --md-primary:#b1c6ff; --md-on-primary:#00277f; --md-primary-container:#003aae; --md-on-primary-container:#d9e2ff;
+  --md-secondary:#bec6dc; --md-on-secondary:#2a3042; --md-secondary-container:#414659; --md-on-secondary-container:#dbe2f9;
+  --md-surface:#1a1c22; --md-on-surface:#e3e2e9; --md-surface-container:#26282e; --md-surface-container-low:#15171c; --md-surface-container-high:#313339; --md-surface-container-highest:#3c3e44;
+  --md-outline:#8e909a; --md-outline-variant:#45474e;
+}
+*,*:before,*:after{box-sizing:border-box}
+body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surface);font-family:"Inter",system-ui,-apple-system,sans-serif;transition:var(--theme-transition)}
+.icon{font-family:'Material Symbols Rounded';font-weight:normal;font-style:normal;line-height:1;display:inline-block;vertical-align:middle}
+.icon.filled{font-variation-settings:'FILL' 1}
+.topbar{position:sticky;top:0;background:var(--md-surface-container-low);border-bottom:1px solid var(--md-outline-variant);padding:12px 0;z-index:10}
+.topbar-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;gap:16px;align-items:center}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--md-primary);color:#fff;display:grid;place-items:center;font-weight:700}
+.title{font-weight:700}
+.actions{margin-left:auto;display:flex;gap:8px}
+.btn{display:inline-flex;gap:8px;align-items:center;border:1px solid var(--md-outline-variant);background:transparent;color:var(--md-primary);padding:10px 16px;border-radius:999px;text-decoration:none;font-weight:600}
+.btn.primary{background:var(--md-primary);color:var(--md-on-primary);border-color:transparent;box-shadow:var(--elevation-1)}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:none;background:transparent}
+.wrap{max-width:1200px;margin:32px auto;padding:0 24px}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:24px}
+.search-input{display:flex;gap:10px;align-items:center;background:var(--md-surface-container);border:1px solid var(--md-outline-variant);border-radius:999px;padding:10px 16px;box-shadow:var(--elevation-1);min-width:260px}
+.search-input input{border:none;outline:none;background:transparent;font:500 1rem "Inter";color:var(--md-on-surface)}
+.view{display:grid;gap:20px}
+.card{background:var(--md-surface-container);border:1px solid var(--md-outline-variant);border-radius:16px;padding:20px;display:grid;grid-template:"thumb content actions" auto/56px 1fr auto;gap:16px;align-items:center}
+.thumb{grid-area:thumb;width:56px;height:56px;border-radius:12px;background:var(--md-primary);color:#fff;display:grid;place-items:center;font-weight:700;font-size:1.5rem}
+.content-area{grid-area:content}
+.card-actions{grid-area:actions;display:flex;gap:8px}
+.meta{display:flex;gap:12px;color:var(--md-outline);font-size:.85rem}
 
-  /* Primary Palette (RES Brand) */
-  --md-primary: #1D2C78; --md-on-primary: #ffffff;
-  --md-primary-container: #d9e2ff; --md-on-primary-container: #00006c;
-  /* Secondary Palette */
-  --md-secondary: #585e71; --md-on-secondary: #ffffff;
-  --md-secondary-container: #dbe2f9; --md-on-secondary-container: #151b2c;
-  /* Neutral Palette (Surfaces, Text) */
-  --md-surface: #fcfcff; --md-on-surface: #1a1c22;
-  --md-surface-container: #eff0f4; --md-surface-container-low: #f5f6fa;
-  --md-surface-container-high: #e9eaee; --md-surface-container-highest: #e3e4e9;
-  /* Outline & Border */
-  --md-outline: #757780; --md-outline-variant: #c3c6d0;
-  /* Others */
-  --md-inverse-surface: #2f3036; --md-inverse-on-surface: #f1f0f7;
-  --md-shadow: #000000;
-
-  /* Radius & Elevation */
-  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-full: 999px;
-  --elevation-1: 0 1px 2px 0 rgba(0,0,0,0.08), 0 1px 3px 0 rgba(0,0,0,0.05);
-  --elevation-2: 0 3px 6px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-  --elevation-3: 0 5px 10px rgba(0,0,0,0.12), 0 2px 4px rgba(0,0,0,0.08);
-}
-
-/* --- Dark Mode Overrides --- */
-html[data-theme="dark"] {
-  --md-primary: #b1c6ff; --md-on-primary: #00277f;
-  --md-primary-container: #003aae; --md-on-primary-container: #d9e2ff;
-  --md-secondary: #bec6dc; --md-on-secondary: #2a3042;
-  --md-secondary-container: #414659; --md-on-secondary-container: #dbe2f9;
-  --md-surface: #1a1c22; --md-on-surface: #e3e2e9;
-  --md-surface-container: #26282e; --md-surface-container-low: #15171c;
-  --md-surface-container-high: #313339; --md-surface-container-highest: #3c3e44;
-  --md-outline: #8e909a; --md-outline-variant: #45474e;
-  --md-inverse-surface: #e3e2e9; --md-inverse-on-surface: #2f3036;
-}
-
-/* --- Base Styles --- */
-*, *::before, *::after { box-sizing: border-box; }
-html { font-size: 16px; }
-body {
-  margin: 0;
-  background-color: var(--md-surface-container-low);
-  color: var(--md-on-surface);
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
-  font-size: 1rem;
-  line-height: 1.5;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  transition: var(--theme-transition);
-}
-
-/* --- Typography & Icons --- */
-.icon {
-  font-family: 'Material Symbols Rounded', sans-serif;
-  font-weight: normal; font-style: normal; font-size: 24px;
-  line-height: 1; letter-spacing: normal; text-transform: none;
-  display: inline-block; white-space: nowrap; word-wrap: normal;
-  direction: ltr; -webkit-font-feature-settings: 'liga'; -webkit-font-smoothing: antialiased;
-  vertical-align: middle;
-}
-.icon.filled { font-variation-settings: 'FILL' 1; }
-
-/* --- Buttons & Chips --- */
-.btn, .chip {
-  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  cursor: pointer; text-decoration: none; border-radius: var(--radius-full);
-  font-weight: 600; font-size: 0.875rem; padding: 10px 16px;
-  border: 1px solid var(--md-outline-variant); background-color: transparent;
-  color: var(--md-primary); transition: var(--theme-transition), transform .1s ease;
-}
-.btn:hover { background-color: var(--md-primary-container); border-color: var(--md-primary); }
-.btn:active { transform: scale(0.97); }
-
-.btn.primary {
-  background-color: var(--md-primary); color: var(--md-on-primary);
-  border-color: transparent; box-shadow: var(--elevation-1);
-}
-.btn.primary:hover { filter: brightness(1.1); box-shadow: var(--elevation-2); }
-
-.icon-btn {
-  width: 40px; height: 40px; border-radius: 50%; padding: 0;
-  font-size: 22px; color: var(--md-on-surface);
-  border: none; background-color: transparent;
-}
-.icon-btn:hover { background-color: var(--md-surface-container-high); }
-
-/* --- Top Bar (Header) --- */
-.topbar {
-  background-color: var(--md-surface-container-low);
-  border-bottom: 1px solid var(--md-outline-variant);
-  padding: 12px 0; position: sticky; top: 0; z-index: 10;
-  backdrop-filter: blur(8px);
-}
-.topbar-inner {
-  max-width: 1200px; margin: 0 auto; padding: 0 24px;
-  display: flex; align-items: center; gap: 16px;
-}
-.brand {
-  display: flex; align-items: center; gap: 12px;
-  text-decoration: none; color: inherit;
-}
-.logo {
-  width: 40px; height: 40px; border-radius: var(--radius-md);
-  background: var(--md-primary); color: var(--md-on-primary);
-  display: grid; place-items: center; font-size: 1.2rem; font-weight: 700;
-}
-.title-group { line-height: 1.2; }
-.title { font-size: 1.125rem; font-weight: 700; }
-.subtitle { font-size: 0.8rem; color: var(--md-outline); }
-.actions { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-
-/* --- Main Layout --- */
-.wrap {
-  width: 100%; max-width: 1200px;
-  margin: 32px auto; padding: 0 24px;
-  flex-grow: 1;
-}
-
-/* --- Toolbar (Search, Sort, Filters) --- */
-.toolbar {
-  display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
-  justify-content: space-between; margin-bottom: 24px;
-}
-.search-group { display: flex; align-items: center; gap: 10px; flex-grow: 1; min-width: 250px; }
-.search-input {
-  display: flex; align-items: center; gap: 10px; width: 100%;
-  background-color: var(--md-surface-container);
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--radius-full); padding: 10px 16px;
-  box-shadow: var(--elevation-1);
-}
-.search-input input {
-  flex: 1; border: none; outline: none; background: transparent;
-  color: var(--md-on-surface); font: 500 1rem "Inter";
-}
-.search-input input::placeholder { color: var(--md-outline); }
-.search-input:focus-within { border-color: var(--md-primary); box-shadow: 0 0 0 2px var(--md-primary-container); }
-
-/* --- Filter Chips --- */
-.filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0; align-items: center; }
-.filter-label { color: var(--md-on-surface); font-weight: 600; font-size: 0.875rem; }
-.chip {
-  padding: 8px 12px; height: 36px;
-  background-color: var(--md-surface-container); color: var(--md-on-surface);
-  border-color: var(--md-outline-variant);
-}
-.chip .icon { font-size: 18px; }
-.chip[aria-pressed="true"] {
-  background-color: var(--md-primary-container);
-  color: var(--md-on-primary-container);
-  border-color: transparent;
-}
-.chip[aria-pressed="true"] .icon { font-variation-settings: 'FILL' 1; }
-
-/* --- Stats --- */
-.stats { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
-.stat { font-weight: 500; font-size: 0.875rem; color: var(--md-outline); }
-.stat .count { font-weight: 700; color: var(--md-on-surface); }
-
-/* --- Template List --- */
-.view { display: grid; gap: 20px; }
-.card {
-  background-color: var(--md-surface-container);
-  border: 1px solid var(--md-outline-variant);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  display: grid;
-  grid-template: "thumb content actions" auto / 56px 1fr auto;
-  gap: 16px;
-  align-items: center;
-  transition: var(--theme-transition), box-shadow .2s ease;
-}
-.card:hover { border-color: var(--md-primary); box-shadow: var(--elevation-2); }
-
-.thumb {
-  grid-area: thumb;
-  width: 56px; height: 56px; border-radius: var(--radius-md);
-  background: var(--md-primary); color: var(--md-on-primary);
-  display: grid; place-items: center; font-weight: 700; font-size: 1.5rem;
-}
-.content-area { grid-area: content; }
-.card h3 { font-size: 1.25rem; margin: 0 0 4px; font-weight: 600; }
-.meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--md-outline); }
-.meta span { display: inline-flex; align-items: center; gap: 4px; }
-.meta .icon { font-size: 16px; }
-
-.card-actions {
-  grid-area: actions;
-  display: flex; gap: 8px; flex-wrap: nowrap;
-}
-.card-actions .btn { padding: 8px 14px; font-size: 0.8rem; }
-.card-actions .btn .icon { font-size: 20px; }
-
-/* --- Empty State --- */
-.empty {
-  border: 2px dashed var(--md-outline-variant);
-  background-color: var(--md-surface-container);
-  border-radius: var(--radius-lg); padding: 48px; text-align: center;
-  color: var(--md-outline); font-size: 1rem;
-}
-.empty .icon { font-size: 48px; margin-bottom: 16px; color: var(--md-primary); display: block; }
-.empty a { color: var(--md-primary); text-decoration: none; font-weight: 600; }
-
-/* --- Footer --- */
-footer {
-  max-width: 1200px; margin: 48px auto 24px; padding: 0 24px;
-  color: var(--md-outline); display: flex; justify-content: space-between;
-  flex-wrap: wrap; gap: 12px; font-size: 0.8rem;
-}
-kbd {
-  background: var(--md-surface-container-high); border: 1px solid var(--md-outline-variant);
-  padding: 3px 8px; border-radius: 6px; font-family: 'Inter', sans-serif;
-  font-weight: 600; font-size: 0.75rem; color: var(--md-on-surface);
-}
-
-/* --- Toast Notification --- */
-.toast {
-  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
-  background-color: var(--md-inverse-surface); color: var(--md-inverse-on-surface);
-  padding: 12px 18px; border-radius: var(--radius-md); box-shadow: var(--elevation-3);
-  z-index: 999; font-weight: 500; font-size: 0.875rem; opacity: 0;
-  transition: opacity .3s ease, transform .3s ease;
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
-  .topbar-inner, .wrap, footer { padding-left: 16px; padding-right: 16px; }
-  .toolbar { flex-direction: column; align-items: stretch; gap: 16px; }
-  .card {
-    grid-template: "thumb content" auto "actions actions" auto / 48px 1fr;
-    row-gap: 20px;
-    padding: 16px;
-  }
-  .thumb { width: 48px; height: 48px; font-size: 1.2rem; }
-  .card-actions {
-    justify-content: flex-start;
-    padding-top: 16px; border-top: 1px solid var(--md-outline-variant);
-  }
-}
-@media (max-width: 480px) {
-  .subtitle { display: none; }
-  .actions .btn:not(.primary) { display: none; }
-  .footer { flex-direction: column; align-items: center; text-align: center; }
-}
+/* ---- Pre-initialize modal ---- */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000}
+.modal{width:min(860px,96vw);max-height:90vh;overflow:auto;background:var(--md-surface);border:1px solid var(--md-outline-variant);border-radius:16px;box-shadow:var(--elevation-3)}
+.modal header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--md-outline-variant)}
+.modal h3{margin:0;font-size:1.1rem}
+.modal .body{padding:16px 20px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-weight:600;font-size:.9rem}
+.field input{border:1px solid var(--md-outline-variant);border-radius:10px;background:var(--md-surface-container);padding:10px 12px;font:500 0.95rem "Inter";outline:none}
+.field input:invalid{border-color:#d33}
+.req{color:#d33;margin-left:4px}
+.modal footer{padding:16px 20px;border-top:1px solid var(--md-outline-variant);display:flex;gap:10px;justify-content:flex-end}
+.badge{display:inline-flex;gap:6px;align-items:center;background:var(--md-surface-container-high);border:1px solid var(--md-outline-variant);padding:6px 10px;border-radius:999px;font-size:.8rem}
+.help{color:var(--md-outline);font-size:.85rem;margin-top:8px}
+.hidden{display:none !important}
 </style>
 </head>
 <body>
 
 <header class="topbar">
   <div class="topbar-inner">
-    <a class="brand" href="/">
-      <div class="logo" aria-hidden="true">RES</div>
-      <div class="title-group">
-        <div class="title">Log Sheets</div>
-        <div class="subtitle">Renewable Energy Systems Limited</div>
-      </div>
-    </a>
+    <div class="logo">RES</div>
+    <div>
+      <div class="title">Log Sheets</div>
+      <div style="color:var(--md-outline);font-size:.85rem">Renewable Energy Systems Limited</div>
+    </div>
     <div class="actions">
       <a class="btn" href="admin.php"><span class="icon">settings</span> Admin</a>
       <button class="icon-btn" id="themeToggle" title="Toggle theme"><span class="icon">dark_mode</span></button>
-      <a class="btn primary" href="admin.php#new"><span class="icon filled"></span> Saved Logs</a>
+      <a class="btn primary" href="admin.php#new"><span class="icon">inventory_2</span> Saved Logs</a>
     </div>
   </div>
 </header>
 
 <main class="wrap">
   <div class="toolbar">
-    <div class="search-group">
-      <div class="search-input">
-        <span class="icon" aria-hidden="true">search</span>
-        <input id="q" type="search" placeholder="Search templates (press / to focus)..." autocomplete="off">
-      </div>
+    <div class="search-input">
+      <span class="icon" aria-hidden="true">search</span>
+      <input id="q" type="search" placeholder="Search templates…" autocomplete="off">
     </div>
-    <div class="controls-group" id="filters">
-      <div class="filter-label">Category:</div>
-    </div>
-  </div>
-
-  <div class="stats">
-    <div class="stat">Total Templates: <span class="count" id="countAll">0</span></div>
-    <div class="stat">Showing: <span class="count" id="countVisible">0</span></div>
+    <span class="badge"><span class="icon">info</span> Click <b>Initialize</b> to start a new log</span>
   </div>
 
   <div class="view" id="view">
-    <?php if (empty($templates)): ?>
-      <div class="empty" id="empty">
-        <span class="icon filled" aria-hidden="true">info</span>
-        <p>No templates created yet.</p>
-        <p>Start by creating your first log sheet in the <a href="admin.php">Admin section</a>.</p>
-      </div>
-    <?php else: ?>
-      <?php foreach($templates as $t):
-        $id = (string)($t['id'] ?? '');
-        $name = (string)($t['name'] ?? $id);
-        $category = (string)($t['category'] ?? 'General');
-        $tags = $t['tags'] ?? [];
-        $pages = (int)($t['pages'] ?? 0);
-        $updated = (string)($t['updated'] ?? '');
-        $desc = (string)($t['desc'] ?? '');
-        $initials = strtoupper(substr(preg_replace('~[^A-Z]~','', $name),0,2) ?: 'LS');
-        $tagStr = implode(',', array_map(fn($x)=> (string)$x, $tags));
-      ?>
-      <div class="card"
-           data-name="<?= h($name) ?>"
-           data-id="<?= h($id) ?>"
-           data-category="<?= h($category) ?>"
-           data-tags="<?= h($tagStr) ?>">
-
-        <div class="thumb" aria-hidden="true"><?= h($initials) ?></div>
-
-        <div class="content-area">
-          <h3><?= h($name) ?></h3>
-          <div class="meta">
-            <span title="Template ID"><span class="icon" aria-hidden="true">qr_code_2</span><?= h($id) ?></span>
-            <?php if ($pages>0): ?><span title="<?= (int)$pages ?> pages"><span class="icon" aria-hidden="true">description</span><?= (int)$pages ?> pages</span><?php endif; ?>
-            <?php if ($updated): ?><span title="Last updated"><span class="icon" aria-hidden="true">update</span><?= h($updated) ?></span><?php endif; ?>
-          </div>
-        </div>
-
-        <div class="card-actions">
-          <button class="icon-btn star" title="Toggle favorite" data-id="<?= h($id) ?>"><span class="icon">star</span></button>
-          <button class="btn" data-action="copy-id" data-id="<?= h($id) ?>"><span class="icon">content_copy</span> Copy ID</button>
-          <a class="btn primary" href="run.php?id=<?= urlencode($id) ?>"><span class="icon"></span> Initialize</a>
+    <?php foreach($templates as $t):
+      $id = (string)($t['id'] ?? '');
+      $name = (string)($t['name'] ?? $id);
+      $category = (string)($t['category'] ?? 'General');
+      $tags = $t['tags'] ?? [];
+      $pages = (int)($t['pages'] ?? 0);
+      $updated = (string)($t['updated'] ?? '');
+      $initials = strtoupper(substr(preg_replace('~[^A-Z]~','', $name),0,2) ?: 'LS');
+    ?>
+    <div class="card" data-id="<?= h($id) ?>" data-name="<?= h($name) ?>" data-category="<?= h($category) ?>">
+      <div class="thumb"><?= h($initials) ?></div>
+      <div class="content-area">
+        <h3 style="margin:0 0 4px"><?= h($name) ?></h3>
+        <div class="meta">
+          <span><span class="icon">qr_code_2</span> <?= h($id) ?></span>
+          <?php if($pages): ?><span><span class="icon">description</span> <?= (int)$pages ?> pages</span><?php endif; ?>
+          <?php if($updated): ?><span><span class="icon">update</span> <?= h($updated) ?></span><?php endif; ?>
         </div>
       </div>
-      <?php endforeach; ?>
-    <?php endif; ?>
+      <div class="card-actions">
+        <?php if ($id === 'LI-PRD-RC-28A'): ?>
+          <!-- Intercept Initialize to open the modal -->
+          <button class="btn primary" data-init="pellet" data-id="<?= h($id) ?>"><span class="icon">play_arrow</span> Initialize</button>
+        <?php else: ?>
+          <a class="btn primary" href="run.php?id=<?= urlencode($id) ?>"><span class="icon">play_arrow</span> Initialize</a>
+        <?php endif; ?>
+      </div>
+    </div>
+    <?php endforeach; ?>
   </div>
 </main>
 
-<footer>
-  <div>Shortcuts: <kbd>/</kbd> search · <kbd>F</kbd> favorites</div>
-  <div>© <?= date('Y') ?> Renewable Energy Systems</div>
-</footer>
-
-<!-- Initialize modal (Pellet Manufacturing – Anode) -->
-<div id="initPelletModal" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);z-index:9999">
-  <div style="background:var(--md-surface);color:var(--md-on-surface);border:1px solid var(--md-outline-variant);
-              width:min(720px,95vw);max-height:90vh;overflow:auto;border-radius:16px;padding:20px;box-shadow:var(--elevation-3)">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
-      <div class="thumb" aria-hidden="true">PM</div>
-      <div>
-        <h3 style="margin:0">Initialize – Pellet Manufacturing (Anode)</h3>
-      </div>
-      <button type="button" id="initClose" class="icon-btn" style="margin-left:auto"><span class="icon">close</span></button>
+<!-- Pre-initialize Modal -->
+<div class="modal-backdrop" id="preModalBackdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="preTitle">
+    <header>
+      <h3 id="preTitle">Initialize: Pellet Manufacturing (Anode)</h3>
+      <button class="icon-btn" id="preClose" aria-label="Close"><span class="icon">close</span></button>
+    </header>
+    <div class="body">
+      <!-- Submit with GET directly to the template -->
+      <form id="preForm" method="get" action="templates/pellet_manufacturing_anode.php" novalidate>
+        <input type="hidden" name="id" value="LI-PRD-RC-28A">
+        <div class="grid">
+          <div class="field">
+            <label>BATTERY CODE <span class="req">*</span></label>
+            <input required name="battery_code" placeholder="e.g. ZZ" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>PID NO. <span class="req">*</span></label>
+            <input required name="pid_no" placeholder="e.g. 046" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>BATTERY NO(s) <span class="req">*</span></label>
+            <input required name="battery_no" placeholder="e.g. 010" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>I/P PRODUCT CODE <span class="req">*</span></label>
+            <input required name="ip_code" placeholder="e.g. ANP-35-ZZ" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>I/P PRODUCT LOT NO. <span class="req">*</span></label>
+            <input required name="ip_lot" placeholder="e.g. DDMMYY-XXX" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>WEIGHT (g) <span class="req">*</span></label>
+            <input required name="ip_weight" placeholder="e.g. 30" inputmode="decimal" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>PELLET WT. RANGE AS PER PID (g) <span class="req">*</span></label>
+            <input required name="pellet_weight_range" autocomplete="off" placeholder="e.g. 0.32 – 0.40">
+          </div>
+          <div class="field">
+            <label>PELLET DIA (mm) (D) <span class="req">*</span></label>
+            <input required name="pellet_dia" placeholder="e.g. 30" inputmode="decimal" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>PELLET THK. RANGE AS PER PID (mm) <span class="req">*</span></label>
+            <input required name="pellet_thk_range" autocomplete="off" placeholder="e.g. 0.24 – 0.28">
+          </div>
+          <div class="field">
+            <label>PRESSURE (kg/cm²) <span class="req">*</span></label>
+            <input required name="pressure" placeholder="e.g. 175" inputmode="decimal" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>COMPRESSION TIME (sec) <span class="req">*</span></label>
+            <input required name="compression" placeholder="e.g. 06" inputmode="numeric" autocomplete="off">
+          </div>
+          <div class="field">
+            <label>Standard MH <span class="req">*</span></label>
+            <input required name="standard_mh" inputmode="numeric" autocomplete="off" placeholder="e.g. 90 min">
+          </div>
+        </div>
+        <div class="help">Tip: values like ranges can include a hyphen (e.g., “0.24 - 0.28”).</div>
+      </form>
     </div>
-
-    <form id="initPelletForm" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <!-- Header area -->
-      <!-- <label>Battery Code
-        <input name="battery_code" type="text" placeholder="e.g. LI-PRD-RC-28A" />
-      </label> -->
-      <label>PID NO.
-        <input name="pid_no" type="text" placeholder="e.g. 021" />
-      </label>
-      <label>BATTERY NO(s)
-        <input name="battery_no" type="text" placeholder="e.g. 001" />
-      </label>
-
-      <!-- Page 2 – I/P product header -->
-      <label>I/P PRODUCT CODE
-        <input name="ip_code" type="text" placeholder="e.g. ANP-35-ZZ" />
-      </label>
-      <label>I/P PRODUCT LOT NO.
-        <input name="ip_lot" type="text" placeholder="e.g. 211025-001" />
-      </label>
-      <label>WEIGHT (g)
-        <input name="ip_weight" type="text" inputmode="decimal" placeholder="e.g. 10" />
-      </label>
-
-      <!-- Page 2 – row of specs above table -->
-      <label>PELLET WT. RANGE AS PER PID (g)
-        <input name="pellet_weight_0" type="text" placeholder="e.g. 0.19-0.21" />
-      </label>
-      <label>PELLET DIA (mm) (D)
-        <input name="pellet_dia" type="text" inputmode="decimal" placeholder="e.g. 30" />
-      </label>
-      <label>PELLET THK. RANGE AS PER PID (mm)
-        <input name="pellet_thk_range_0" type="text" placeholder="e.g. 0.26-0.32" />
-      </label>
-      <label>PRESSURE (kg/cm²)
-        <input name="pressure_0" type="text" inputmode="decimal" placeholder="e.g. 175" />
-      </label>
-      <label>COMPRESSION TIME (sec)
-        <input name="compression_0" type="text" inputmode="decimal" placeholder="e.g. 06" />
-      </label>
-
-      <div style="grid-column:1/-1;display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
-        <button type="button" class="btn" id="initCancel">Cancel</button>
-        <button type="submit" class="btn primary">Submit</button>
-      </div>
-    </form>
+    <footer>
+      <button class="btn" id="preCancel"><span class="icon"></span> Cancel</button>
+      <button class="btn primary" id="preSubmit" form="preForm" type="submit" disabled>
+        <span class="icon"></span> Submit
+      </button>
+    </footer>
   </div>
 </div>
 
 <script>
 (() => {
-  'use strict';
   const $ = (s, r=document) => r.querySelector(s);
   const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
-  // --- Element References ---
-  const view = $('#view');
-  const q = $('#q');
+  // Theme toggle
   const themeToggle = $('#themeToggle');
-  const filtersWrap = $('#filters');
-  const countAll = $('#countAll');
-  const countVisible = $('#countVisible');
-  const cards = $$('.card');
-  const emptyState = $('#empty');
-
-  // --- State Management ---
-  const PREFS_KEY = 'res-logs-prefs';
-  const FAVS_KEY = 'res-logs-favs';
-  let prefs = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
-  const favs = new Set(JSON.parse(localStorage.getItem(FAVS_KEY) || '[]'));
-
-  // --- Theme Controller ---
-  const themeController = {
-    init() {
-      const savedTheme = prefs.theme;
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      if (savedTheme) {
-        this.setTheme(savedTheme);
-      } else {
-        this.setTheme(systemPrefersDark ? 'dark' : 'light');
-      }
-      themeToggle.addEventListener('click', () => this.toggleTheme());
-    },
-    setTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      $('#themeToggle .icon').textContent = theme === 'dark' ? 'light_mode' : 'dark_mode';
-      prefs.theme = theme;
-      localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
-    },
-    toggleTheme() {
-      const currentTheme = document.documentElement.getAttribute('data-theme');
-      this.setTheme(currentTheme === 'dark' ? 'light' : 'dark');
-    }
-  };
-
-  // --- Filter & Render Controller ---
-  const renderController = {
-    init() {
-      this.generateFilterChips();
-      this.updateFavStars();
-      this.render();
-      q.addEventListener('input', () => this.render());
-    },
-    generateFilterChips() {
-      const categories = new Set(['All', ...cards.map(c => c.dataset.category || 'General')]);
-      const fragment = document.createDocumentFragment();
-      categories.forEach(cat => {
-        const chip = document.createElement('button');
-        chip.className = 'chip';
-        chip.textContent = cat;
-        chip.dataset.category = cat;
-        chip.setAttribute('aria-pressed', cat === 'All' ? 'true' : 'false');
-        chip.addEventListener('click', () => {
-          $$('.chip[data-category]').forEach(c => c.setAttribute('aria-pressed', 'false'));
-          chip.setAttribute('aria-pressed', 'true');
-          this.render();
-        });
-        fragment.appendChild(chip);
-      });
-      filtersWrap.appendChild(fragment);
-    },
-    getActiveFilters() {
-      const query = q.value.trim().toLowerCase();
-      const activeCatChip = $('[data-category][aria-pressed="true"]');
-      const category = (activeCatChip && activeCatChip.dataset.category !== 'All') ? activeCatChip.dataset.category : null;
-      return { query, category };
-    },
-    render() {
-      const { query, category } = this.getActiveFilters();
-      let visibleCount = 0;
-      cards.forEach(card => {
-        const name = card.dataset.name.toLowerCase();
-        const id = card.dataset.id.toLowerCase();
-        const cardCategory = card.dataset.category;
-        let isVisible = true;
-        if (query && !(name.includes(query) || id.includes(query))) isVisible = false;
-        if (category && cardCategory !== category) isVisible = false;
-        card.style.display = isVisible ? '' : 'none';
-        if (isVisible) visibleCount++;
-      });
-      countVisible.textContent = visibleCount;
-      if (emptyState) emptyState.style.display = visibleCount === 0 ? '' : 'none';
-    },
-    updateFavStars() {
-      $$('.star').forEach(s => {
-        const isFav = favs.has(s.dataset.id);
-        s.classList.toggle('is-favorite', isFav);
-        s.querySelector('.icon').classList.toggle('filled', isFav);
-      });
-    }
-  };
-
-  // --- Event Delegation & Other Handlers ---
-  function setupEventListeners() {
-    document.body.addEventListener('click', (e) => {
-      const copyBtn = e.target.closest('[data-action="copy-id"]');
-      if (copyBtn) {
-        navigator.clipboard.writeText(copyBtn.dataset.id).then(() => {
-          toast('ID copied to clipboard!');
-        }).catch(err => {
-          toast('Could not copy ID.');
-          console.error('Copy failed:', err);
-        });
-      }
-
-      const starBtn = e.target.closest('.star');
-      if (starBtn) {
-        const id = starBtn.dataset.id;
-        favs.has(id) ? favs.delete(id) : favs.add(id);
-        localStorage.setItem(FAVS_KEY, JSON.stringify([...favs]));
-        renderController.updateFavStars();
-      }
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === '/' && document.activeElement.tagName !== 'INPUT') {
-        e.preventDefault();
-        q.focus();
-      }
-    });
-  }
-
-  // --- Toast Notification ---
-  function toast(msg) {
-    const existing = $('.toast');
-    if (existing) existing.remove();
-    const t = document.createElement('div');
-    t.className = 'toast';
-    t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => { t.style.opacity = 1; t.style.transform = 'translateX(-50%) translateY(-10px)'; }, 10);
-    setTimeout(() => { t.style.opacity = 0; t.style.transform = 'translateX(-50%) translateY(0)'; }, 2000);
-    setTimeout(() => t.remove(), 2300);
-  }
-
-  // --- App Initialization ---
-  function init() {
-    if (!cards.length && $('#empty')) {
-      $('#empty').style.display = '';
-      $('.toolbar').style.display = 'none';
-      $('.stats').style.display = 'none';
-      return;
-    }
-    countAll.textContent = cards.length;
-    themeController.init();
-    renderController.init();
-    setupEventListeners();
-  }
-
-  // Run the app
-  init();
-
-  /* ---------- Initialize flow for Pellet Manufacturing (Anode) ---------- */
-  const PELLET_ID = 'LI-PRD-RC-28A';
-  const MODAL = document.getElementById('initPelletModal');
-  const FORM  = document.getElementById('initPelletForm');
-
-  const openModal  = () => MODAL.style.display = 'flex';
-  const closeModal = () => MODAL.style.display = 'none';
-
-  // Intercept Initialize click only for Pellet template
-  document.body.addEventListener('click', (e) => {
-    const btn = e.target.closest('a.btn.primary[href^="run.php?id="]');
-    if (!btn) return;
-    const url = new URL(btn.getAttribute('href'), location.href);
-    const id  = url.searchParams.get('id');
-    if (id === PELLET_ID) {
-      e.preventDefault();
-      openModal();
-    }
+  themeToggle.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    $('#themeToggle .icon').textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
   });
 
-  // Modal basic close actions
-  document.getElementById('initClose').addEventListener('click', closeModal);
-  document.getElementById('initCancel').addEventListener('click', closeModal);
-  MODAL.addEventListener('click', (e) => { if (e.target === MODAL) closeModal(); });
+  // Search filter
+  const q = $('#q');
+  q.addEventListener('input', () => {
+    const term = q.value.trim().toLowerCase();
+    $$('.card').forEach(card => {
+      const hay = (card.dataset.name + ' ' + card.dataset.id + ' ' + (card.dataset.category||'')).toLowerCase();
+      card.style.display = hay.includes(term) ? '' : 'none';
+    });
+  });
 
-  // Submit: stash data and navigate to run.php
-  FORM.addEventListener('submit', (e) => {
+  // ---- Pre-init modal logic ----
+  const modal = $('#preModalBackdrop');
+  const preForm = $('#preForm');
+  const preSubmit = $('#preSubmit');
+  const preCancel = $('#preCancel');
+  const preClose = $('#preClose');
+
+  function openModal(){ modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); }
+  function closeModal(){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+
+  // Open modal only for Pellet Manufacturing (Anode)
+  document.body.addEventListener('click', (e)=>{
+    const btn = e.target.closest('[data-init="pellet"]');
+    if(!btn) return;
     e.preventDefault();
-    const fd = new FormData(FORM);
-    const payload = Object.fromEntries(fd.entries());
-
-    const initData = {
-      // Header (optional to set LOG ID)
-      log_id:         payload.battery_code || '',
-      pid_no:         payload.pid_no || '',
-      battery_no:     payload.battery_no || '',
-
-      // Page 2 – I/P header
-      ip_code:        payload.ip_code || '',
-      ip_lot:         payload.ip_lot || '',
-      ip_weight:      payload.ip_weight || '',
-
-      // Specs row (single row in your template)
-      pellet_weight_0:     payload.pellet_weight_0 || '',
-      pellet_dia:          payload.pellet_dia || '',
-      pellet_thk_range_0:  payload.pellet_thk_range_0 || '',
-      pressure_0:          payload.pressure_0 || '',
-      compression_0:       payload.compression_0 || ''
-    };
-
-    sessionStorage.setItem('init:' + PELLET_ID, JSON.stringify(initData));
-    location.href = 'run.php?id=' + encodeURIComponent(PELLET_ID);
+    preForm.reset();
+    preSubmit.disabled = true;
+    openModal();
   });
+
+  // Close actions
+  preCancel.addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); });
+  if (preClose) preClose.addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); });
+  modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
+
+  // Enable submit only when all required fields are filled
+  function validateForm(){
+    const allFilled = $$('#preForm [required]').every(inp => String(inp.value).trim() !== '');
+    preSubmit.disabled = !allFilled;
+  }
+  preForm.addEventListener('input', validateForm);
 })();
 </script>
 </body>

@@ -1,0 +1,408 @@
+[
+    {
+        "meta": {
+            "uid": "87de3db6850a1603",
+            "template_id": "LI-PRD-RC-28A",
+            "created_at": "2025-10-24T10:31:54+05:30",
+            "ip": "127.0.0.1",
+            "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:144.0) Gecko/20100101 Firefox/144.0"
+        },
+        "header1": {
+            "wi_name": "PELLET MANUFACTURING (ANODE)",
+            "wi_no": "WI-PRD-28",
+            "log_id": "LI-PRD-RC-28A",
+            "log_sr_no": "001",
+            "pid_no": "576",
+            "battery_no": "57",
+            "date": ""
+        },
+        "safety": {
+            "operator": {
+                "apron": "cross",
+                "gloves": "tick",
+                "mask": ""
+            },
+            "earthing": {
+                "glove_box": "",
+                "h_press": "",
+                "operator": ""
+            },
+            "comments": ""
+        },
+        "ws_prep": {
+            "ids": {
+                "glove_box_id": "PRD-025",
+                "h_press_id": "PRD-191",
+                "balance_id": "PRD-316",
+                "thickness_gauge_id": "PRD-313"
+            },
+            "cleaning": {
+                "gb": "",
+                "hp": "tick",
+                "bal": "tick",
+                "thk": ""
+            },
+            "dew": "",
+            "calibration": {
+                "gb": "",
+                "hp": "",
+                "bal": "",
+                "thk": ""
+            },
+            "utilities": {
+                "watch_glass": "",
+                "tweezers": "",
+                "ac": "",
+                "rc": ""
+            }
+        },
+        "hazards": {
+            "r07_15": "",
+            "r07_16": "",
+            "r07_17": "",
+            "r07_18": "",
+            "risk_rank": "MEDIUM",
+            "consequence_rank": {
+                "E": 2,
+                "M": 2,
+                "F": 2,
+                "R": 2
+            }
+        },
+        "quality_inspection": [
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            },
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            },
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            },
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            },
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            },
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            },
+            {
+                "time": "",
+                "pellet_range": "",
+                "powder_weight": "",
+                "pellet_weight": "",
+                "t1": "",
+                "t2": "",
+                "t3": "",
+                "t4": "",
+                "t5": "",
+                "avg": "",
+                "maxmin": "",
+                "density": "",
+                "inspection_by": ""
+            }
+        ],
+        "qc_observations": "",
+        "previous_log": "",
+        "page2": {
+            "ip": {
+                "name": "ANODE POWDER",
+                "code": "574",
+                "lot": "74",
+                "weight": "74",
+                "expiry": "",
+                "start_time": "",
+                "end_time": ""
+            },
+            "inspection": [
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                },
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                },
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                },
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                },
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                },
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                },
+                {
+                    "time": "",
+                    "pellet_range": "",
+                    "powder_weight": "",
+                    "pellet_weight": "",
+                    "pellet_dia": "",
+                    "t1": "",
+                    "t2": "",
+                    "t3": "",
+                    "t4": "",
+                    "t5": "",
+                    "avg": "",
+                    "pressure": "",
+                    "compression": "",
+                    "maxmin": "",
+                    "density": "",
+                    "inspection_by": ""
+                }
+            ],
+            "process_log_left": [
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                }
+            ],
+            "process_log_right": [
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                },
+                {
+                    "time": "",
+                    "dew": "",
+                    "bottle_weight": ""
+                }
+            ],
+            "barcode": "",
+            "op": {
+                "name": "ANODE PELLETS",
+                "code": "ANP-28-",
+                "lot": "NaNNaNN-001",
+                "qty": "",
+                "accepted": "",
+                "accepted_weight": "",
+                "rejected": "",
+                "flags": {
+                    "T": "",
+                    "W": "",
+                    "B": ""
+                },
+                "yield_pct": "NaN"
+            },
+            "actual_mh": "",
+            "lost_mh": "",
+            "mh_pellet": "",
+            "leftover_qty": "",
+            "storage_label": "",
+            "operator_name": "",
+            "prd_observations": ""
+        }
+    }
+]
