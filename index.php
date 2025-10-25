@@ -1,4 +1,11 @@
 <?php
+session_start();
+// include 'includes/functions.php';
+if(isset($_SESSION['LOGI_EMP_ID']) && $_SESSION['LOGI_EMP_ID']!=''){
+    $role=$_SESSION['LOGI_USER_ROLE_NAME'];
+}else{
+  echo "<script>window.location.href='login'</script>";
+}
 // --- Data Setup (same as before) ---
 $manifestPath = __DIR__ . '/templates/manifest.json';
 $manifest = json_decode(@file_get_contents($manifestPath), true) ?: [];
@@ -106,9 +113,10 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
       <div style="color:var(--md-outline);font-size:.85rem">Renewable Energy Systems Limited</div>
     </div>
     <div class="actions">
-      <a class="btn" href="admin.php"><span class="icon">settings</span> Admin</a>
+      <a class="btn" href="admin"><span class="icon">settings</span> Admin</a>
       <button class="icon-btn" id="themeToggle" title="Toggle theme"><span class="icon">dark_mode</span></button>
-      <a class="btn primary" href="admin.php#new"><span class="icon">inventory_2</span> Saved Logs</a>
+      <a class="btn primary" href="admin#new"><span class="icon">inventory_2</span> Saved Logs</a>
+      <a class="btn primary" href="logout"><span class="icon">logout</span> Logout</a>
     </div>
   </div>
 </header>
