@@ -1,36 +1,48 @@
 <?php
 session_start();
-// include 'includes/functions.php';
-if(isset($_SESSION['LOGI_EMP_ID']) && $_SESSION['LOGI_EMP_ID']!=''){
-    $role=$_SESSION['LOGI_USER_ROLE_NAME'];
-}else{
-  echo "<script>window.location.href='login'</script>";
-}
-// --- Data Setup (same as before) ---
-$manifestPath = __DIR__ . '/templates/manifest.json';
-$manifest = json_decode(@file_get_contents($manifestPath), true) ?: [];
-$templates = $manifest['templates'] ?? [
-    [
-        'id' => 'LI-PRD-RC-28A',
-        'name' => 'Pellet Manufacturing (Anode)',
-        'category' => 'Production',
-        'tags' => ['Anode', 'Quality Control'],
-        'pages' => 5,
-        'updated' => '2025-10-12',
-        'desc' => 'Log sheet for the entire anode pellet manufacturing process, from raw material to final inspection.'
-    ],
-    [
-        'id' => 'LI-PRD-RC-13/2S4P',
-        'name' => 'Stack Assembly',
-        'category' => 'Assembly',
-        'tags' => ['2S4P', 'Assembly Line'],
-        'pages' => 8,
-        'updated' => '2025-10-14',
-        'desc' => 'Detailed assembly log for the 2S4P configuration battery stack.'
-    ]
-];
+include 'includes/functions.php';
 
+// Session / auth
+if (isset($_SESSION['LOGI_EMP_ID']) && $_SESSION['LOGI_EMP_ID'] != '') {
+    $role = $_SESSION['LOGI_USER_ROLE_NAME'];
+} else {
+    echo "<script>window.location.href='login'</script>";
+    exit;
+}
+
+// ---------------------------------
+// Fetch templates from API instead of manifest.json
+// ---------------------------------
+$templates = [];
+$api_url_full = $api_url . "/templates/list";
+
+$raw = get_api_data($api_url_full, $api_key);
+$resp = json_decode($raw, true);
+
+if (is_array($resp) && isset($resp['status']) && $resp['status'] === 'success' && isset($resp['data']) && is_array($resp['data'])) {
+    // Normalize each template row into what the UI expects
+    foreach ($resp['data'] as $row) {
+        $templates[] = [
+            'id'       => $row['id'] ?? '',
+            'name'     => $row['name'] ?? '',
+            'file'     => $row['file'] ?? '',
+            'desc'     => $row['description'] ?? '',
+            'category' => $row['department'] ?? '',
+            'rev_no'   => $row['rev_no'] ?? '',
+            'updated'  => $row['updated_on'] ?? '',
+            // pages doesn't exist in API; keep 0 so UI won't break
+            'pages'    => 0,
+        ];
+    }
+} else {
+    // API failed or returned error → graceful fallback
+    $templates = [];
+    // you could also echo an error badge later in HTML if you want
+}
+
+// helper for escaping
 function h($s){ return htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8'); }
+
 ?>
 <!doctype html>
 <html lang="en" data-theme="light">
@@ -131,35 +143,81 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
   </div>
 
   <div class="view" id="view">
-    <?php foreach($templates as $t):
-      $id = (string)($t['id'] ?? '');
-      $name = (string)($t['name'] ?? $id);
-      $category = (string)($t['category'] ?? 'General');
-      $tags = $t['tags'] ?? [];
-      $pages = (int)($t['pages'] ?? 0);
-      $updated = (string)($t['updated'] ?? '');
-      $initials = strtoupper(substr(preg_replace('~[^A-Z]~','', $name),0,2) ?: 'LS');
-    ?>
-    <div class="card" data-id="<?= h($id) ?>" data-name="<?= h($name) ?>" data-category="<?= h($category) ?>">
-      <div class="thumb"><?= h($initials) ?></div>
-      <div class="content-area">
-        <h3 style="margin:0 0 4px"><?= h($name) ?></h3>
-        <div class="meta">
-          <span><span class="icon">qr_code_2</span> <?= h($id) ?></span>
-          <?php if($pages): ?><span><span class="icon">description</span> <?= (int)$pages ?> pages</span><?php endif; ?>
-          <?php if($updated): ?><span><span class="icon">update</span> <?= h($updated) ?></span><?php endif; ?>
+
+    <?php if (empty($templates)): ?>
+      <div style="color:var(--md-outline);font-size:.9rem;">
+        <span class="icon">warning</span>&nbsp;No templates available.
+      </div>
+    <?php else: ?>
+
+      <?php foreach ($templates as $t):
+        $id        = (string)($t['id'] ?? '');
+        $name      = (string)($t['name'] ?? $id);
+        $file      = (string)($t['file'] ?? '');
+        $category  = (string)($t['category'] ?? 'General');
+        $pages     = (int)($t['pages'] ?? 0); // API didn't provide pages; will be 0
+        $updated   = (string)($t['updated'] ?? '');
+        $rev_no    = (string)($t['rev_no'] ?? '');
+        $initials  = strtoupper(substr(preg_replace('~[^A-Z]~','', $name),0,2) ?: 'LS');
+
+        // we'll treat LI-PRD-RC-28A as the special modal-trigger template
+        $is_pellet = ($id === 'LI-PRD-RC-28A');
+      ?>
+      <div
+        class="card"
+        data-id="<?= h($id) ?>"
+        data-name="<?= h($name) ?>"
+        data-category="<?= h($category) ?>"
+      >
+        <div class="thumb"><?= h($initials) ?></div>
+
+        <div class="content-area">
+          <h3 style="margin:0 0 4px"><?= h($name) ?></h3>
+          <div class="meta">
+            <span><span class="icon">qr_code_2</span> <?= h($id) ?></span>
+            <?php if ($rev_no !== ''): ?>
+              <span><span class="icon">fact_check</span> <?= h($rev_no) ?></span>
+            <?php endif; ?>
+            <?php if($pages): ?>
+              <span><span class="icon">description</span> <?= (int)$pages ?> pages</span>
+            <?php endif; ?>
+            <?php if($updated): ?>
+              <span><span class="icon">update</span> <?= h($updated) ?></span>
+            <?php endif; ?>
+          </div>
+          <?php if (!empty($t['desc'])): ?>
+            <div style="font-size:.85rem; color:var(--md-outline); margin-top:6px;">
+              <?= h($t['desc']) ?>
+            </div>
+          <?php endif; ?>
+        </div>
+
+        <div class="card-actions">
+          <?php if ($is_pellet): ?>
+            <!-- Pellet Manufacturing (Anode) opens pre-init modal -->
+            <button
+              class="btn primary"
+              data-init="pellet"
+              data-id="<?= h($id) ?>"
+              data-file="<?= h($file) ?>"
+            >
+              <span class="icon">play_arrow</span> Initialize
+            </button>
+          <?php else: ?>
+            <!-- Others go straight to file -->
+            <a
+              class="btn primary"
+              href="templates/<?= urlencode($file) ?>?id=<?= urlencode($id) ?>"
+            >
+              <span class="icon">play_arrow</span> Initialize
+            </a>
+          <?php endif; ?>
         </div>
       </div>
-      <div class="card-actions">
-        <?php if ($id === 'LI-PRD-RC-28A'): ?>
-          <!-- Intercept Initialize to open the modal -->
-          <button class="btn primary" data-init="pellet" data-id="<?= h($id) ?>"><span class="icon">play_arrow</span> Initialize</button>
-        <?php else: ?>
-          <a class="btn primary" href="run.php?id=<?= urlencode($id) ?>"><span class="icon">play_arrow</span> Initialize</a>
-        <?php endif; ?>
-      </div>
-    </div>
-    <?php endforeach; ?>
+      <?php endforeach; ?>
+
+    <?php endif; ?>
+
   </div>
 </main>
 
@@ -171,9 +229,11 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
       <button class="icon-btn" id="preClose" aria-label="Close"><span class="icon">close</span></button>
     </header>
     <div class="body">
-      <!-- Submit with GET directly to the template -->
-      <form id="preForm" method="get" action="templates/pellet_manufacturing_anode.php" novalidate>
+      <!-- IMPORTANT:
+           We'll set form action dynamically in JS based on data-file from the clicked card -->
+      <form id="preForm" method="get" action="" novalidate>
         <input type="hidden" name="id" value="LI-PRD-RC-28A">
+
         <div class="grid">
           <div class="field">
             <label>BATTERY CODE <span class="req">*</span></label>
@@ -224,6 +284,7 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
             <input required name="standard_mh" inputmode="numeric" autocomplete="off" placeholder="e.g. 90 min">
           </div>
         </div>
+
         <div class="help">Tip: values like ranges can include a hyphen (e.g., “0.24 - 0.28”).</div>
       </form>
     </div>
@@ -238,16 +299,16 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
 
 <script>
 (() => {
-  const $ = (s, r=document) => r.querySelector(s);
+  const $  = (s, r=document) => r.querySelector(s);
   const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
 
   // Theme toggle
   const themeToggle = $('#themeToggle');
   themeToggle.addEventListener('click', () => {
-    const cur = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = cur === 'dark' ? 'light' : 'dark';
+    const cur  = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = (cur === 'dark') ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
-    $('#themeToggle .icon').textContent = next === 'dark' ? 'light_mode' : 'dark_mode';
+    $('#themeToggle .icon').textContent = (next === 'dark') ? 'light_mode' : 'dark_mode';
   });
 
   // Search filter
@@ -255,34 +316,66 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
   q.addEventListener('input', () => {
     const term = q.value.trim().toLowerCase();
     $$('.card').forEach(card => {
-      const hay = (card.dataset.name + ' ' + card.dataset.id + ' ' + (card.dataset.category||'')).toLowerCase();
+      const hay = (
+        (card.dataset.name || '') + ' ' +
+        (card.dataset.id || '')   + ' ' +
+        (card.dataset.category || '')
+      ).toLowerCase();
       card.style.display = hay.includes(term) ? '' : 'none';
     });
   });
 
   // ---- Pre-init modal logic ----
-  const modal = $('#preModalBackdrop');
-  const preForm = $('#preForm');
-  const preSubmit = $('#preSubmit');
-  const preCancel = $('#preCancel');
-  const preClose = $('#preClose');
+  const modal      = $('#preModalBackdrop');
+  const preForm    = $('#preForm');
+  const preSubmit  = $('#preSubmit');
+  const preCancel  = $('#preCancel');
+  const preClose   = $('#preClose');
+  const preTitle   = $('#preTitle');
 
-  function openModal(){ modal.style.display='flex'; modal.setAttribute('aria-hidden','false'); }
-  function closeModal(){ modal.style.display='none'; modal.setAttribute('aria-hidden','true'); }
+  function openModal() {
+    modal.style.display = 'flex';
+    modal.setAttribute('aria-hidden','false');
+  }
+  function closeModal() {
+    modal.style.display = 'none';
+    modal.setAttribute('aria-hidden','true');
+  }
 
-  // Open modal only for Pellet Manufacturing (Anode)
-  document.body.addEventListener('click', (e)=>{
+  // Click handler for Initialize buttons that need modal
+  document.body.addEventListener('click', (e) => {
     const btn = e.target.closest('[data-init="pellet"]');
-    if(!btn) return;
+    if (!btn) return;
+
     e.preventDefault();
+
+    // get template meta from button
+    const tmplId   = btn.getAttribute('data-id')   || 'LI-PRD-RC-28A';
+    const tmplFile = btn.getAttribute('data-file') || 'pellet_manufacturing_anode.php';
+
+    // reset form
     preForm.reset();
     preSubmit.disabled = true;
+
+    // update hidden ID so the template sees its own ID
+    // and set action to correct file from API
+    preForm.querySelector('input[name="id"]').value = tmplId;
+    preForm.setAttribute('action', 'templates/' + tmplFile);
+
+    // update modal title dynamically using the card title if we can find it
+    const card = btn.closest('.card');
+    const h3   = card ? card.querySelector('.content-area h3') : null;
+    const niceName = h3 ? h3.textContent.trim() : 'Initialize';
+    preTitle.textContent = 'Initialize: ' + niceName;
+
     openModal();
   });
 
   // Close actions
   preCancel.addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); });
-  if (preClose) preClose.addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); });
+  if (preClose) {
+    preClose.addEventListener('click', (e)=>{ e.preventDefault(); closeModal(); });
+  }
   modal.addEventListener('click', (e)=>{ if(e.target === modal) closeModal(); });
 
   // Enable submit only when all required fields are filled
@@ -291,7 +384,9 @@ body{margin:0;background:var(--md-surface-container-low);color:var(--md-on-surfa
     preSubmit.disabled = !allFilled;
   }
   preForm.addEventListener('input', validateForm);
+
 })();
 </script>
+
 </body>
 </html>
